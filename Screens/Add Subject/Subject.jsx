@@ -21,6 +21,7 @@ const Subject = ({navigation}) => {
   const attendance = useSelector(state => state);
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
+  const [editId, setEditId] = useState();
 
   useEffect(() => {
     getAttendanceData();
@@ -118,6 +119,22 @@ const Subject = ({navigation}) => {
     );
   };
 
+  const editBtnHandler = (id, name) => {
+    setEditId(id);
+    setInput(name);
+  };
+
+  const saveEdithandler = () => {
+    let subInd = attendance.findIndex(subject => subject.id === editId);
+    const updatedAttendance = [...attendance];
+    updatedAttendance[subInd].name = input;
+
+    dispatch(setValueHandler(updatedAttendance));
+    setEditId();
+    setInput('');
+    Keyboard.dismiss();
+    ToastAndroid.show('Subject Name Changed!', ToastAndroid.SHORT);
+  };
   return (
     <View style={styles.container}>
       {attendance && attendance.length === 0 ? (
@@ -131,7 +148,10 @@ const Subject = ({navigation}) => {
           {attendance &&
             attendance.map(item => {
               return (
-                <View key={item.id} style={styles.indiSubArea}>
+                <TouchableOpacity
+                  key={item.id}
+                  style={styles.indiSubArea}
+                  onPress={() => editBtnHandler(item.id, item.name)}>
                   <Text style={styles.indiSubName}>{item.name}</Text>
                   <TouchableOpacity
                     style={styles.deleteBtn}
@@ -139,7 +159,7 @@ const Subject = ({navigation}) => {
                     onPress={() => removeSubjectHandler(item.id)}>
                     <Icon1 name="delete-outline" size={24} color="#181818" />
                   </TouchableOpacity>
-                </View>
+                </TouchableOpacity>
               );
             })}
         </ScrollView>
@@ -153,12 +173,21 @@ const Subject = ({navigation}) => {
           onChangeText={text => setInput(text)}
           onSubmitEditing={addSubjectHandler}
         />
-        <TouchableOpacity
-          style={styles.addSubjectBtn}
-          activeOpacity={0.4}
-          onPress={addSubjectHandler}>
-          <Icon name="plus" size={24} color="#f5f5f5" />
-        </TouchableOpacity>
+        {editId ? (
+          <TouchableOpacity
+            style={styles.addSubjectBtn}
+            activeOpacity={0.4}
+            onPress={saveEdithandler}>
+            <Icon1 name="done" size={24} color="#fff" />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={styles.addSubjectBtn}
+            activeOpacity={0.4}
+            onPress={addSubjectHandler}>
+            <Icon name="plus" size={24} color="#f5f5f5" />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );

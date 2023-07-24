@@ -50,7 +50,7 @@ export default function App() {
     <Provider store={mystore}>
       <NavigationContainer>
         <Drawer.Navigator
-          initialRouteName="Home"
+          initialRouteName="Subject"
           drawerContent={props => <CustomDrawerContent {...props} />}>
           <Drawer.Screen name="Home" component={Main} />
           <Drawer.Screen name="Subject" component={Subject} />
