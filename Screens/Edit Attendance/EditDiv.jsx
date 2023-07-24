@@ -2,7 +2,11 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 const EditDiv = props => {
-  if (props.present.includes(props.date) || props.absent.includes(props.date)) {
+  if (
+    props.present.includes(props.date) ||
+    props.absent.includes(props.date) ||
+    props.cancel.includes(props.date)
+  ) {
     return (
       <View style={styles.div}>
         <View style={styles.textArea}>

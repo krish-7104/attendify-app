@@ -1,4 +1,12 @@
-import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  Modal,
+  TouchableOpacity,
+} from 'react-native';
 import React, {useEffect, useLayoutEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
@@ -10,6 +18,14 @@ const EditAttend = ({navigation}) => {
   const [date, setDate] = useState('');
   const attendance = useSelector(state => state);
   const dispatch = useDispatch();
+  const [showPopup, setShowPopup] = useState(false);
+  const [deleteData, setDeleteDate] = useState({
+    id: '',
+    date: '',
+    p: false,
+    a: false,
+    c: false,
+  });
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -77,50 +93,53 @@ const EditAttend = ({navigation}) => {
     }
   };
 
-  const editAttendance = (id, date) => {
+  const editAttendance = selectedType => {
+    if (selectedType === 'close') {
+      setShowPopup(false);
+      return;
+    }
     let subjId;
     attendance.map((ele, ind) => {
-      if (ele.id === id) {
+      if (ele.id === deleteData.id) {
         subjId = ind;
       }
     });
     let subject = attendance[subjId];
     dispatch(
       setValueHandler([
-        ...attendance.filter(item => item.id !== id),
+        ...attendance.filter(item => item.id !== deleteData.id),
         {
-          id: id,
+          id: deleteData.id,
           name: subject.name,
-          present: subject.present.filter(
-            item => item !== date.toString().slice(0, 15),
-          ),
-          absent: subject.absent.filter(
-            item => item !== date.toString().slice(0, 15),
-          ),
+          present:
+            selectedType === 'present'
+              ? subject.present.filter(
+                  item => item !== deleteData.date.toString().slice(0, 15),
+                )
+              : subject.present,
+          absent:
+            selectedType === 'absent'
+              ? subject.absent.filter(
+                  item => item !== deleteData.date.toString().slice(0, 15),
+                )
+              : subject.absent,
+          cancel:
+            selectedType === 'cancel'
+              ? subject.cancel.filter(
+                  item => item !== deleteData.date.toString().slice(0, 15),
+                )
+              : subject.cancel,
         },
       ]),
     );
+    setShowPopup(false);
     storeAttendanceHandler();
   };
 
   const removeAttendanceHandler = (id, date) => {
-    Alert.alert(
-      'Are You Sure?',
-      'You want to delete attendance of this subject',
-      [
-        {
-          text: 'No',
-          style: 'cancel',
-        },
-        {
-          text: 'Yes',
-          onPress: () => editAttendance(id, date),
-        },
-      ],
-      {cancelable: false},
-    );
+    setShowPopup(true);
+    setDeleteDate({id, date});
   };
-
   return (
     <View style={styles.container}>
       <ChangeDate
@@ -145,6 +164,33 @@ const EditAttend = ({navigation}) => {
               />
             );
           })}
+        <Modal visible={showPopup} transparent animationType="fade">
+          <View style={styles.modalContainer}>
+            <View style={styles.popup}>
+              <Text style={styles.optionHead}>Select Attendance To Delete</Text>
+              <TouchableOpacity
+                style={styles.option}
+                onPress={() => editAttendance('present')}>
+                <Text style={styles.optionText}>Delete Present</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.option}
+                onPress={() => editAttendance('absent')}>
+                <Text style={styles.optionText}>Delete Absent</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.option}
+                onPress={() => editAttendance('cancel')}>
+                <Text style={styles.optionText}>Delete Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.cancelOption}
+                onPress={() => editAttendance('close')}>
+                <Text style={styles.cancelOptionText}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </ScrollView>
     </View>
   );
@@ -164,5 +210,44 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     marginBottom: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  popup: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+  },
+  option: {
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+  },
+  optionHead: {
+    fontSize: 16,
+    color: 'black',
+    fontFamily: 'Poppins-SemiBold',
+    marginBottom: 10,
+  },
+  optionText: {
+    fontSize: 17,
+    color: 'black',
+    fontFamily: 'Poppins-Regular',
+  },
+  cancelOption: {
+    paddingVertical: 8,
+    marginTop: 10,
+    backgroundColor: 'red',
+    borderRadius: 5,
+  },
+  cancelOptionText: {
+    fontSize: 14,
+    color: 'white',
+    textAlign: 'center',
+    fontFamily: 'Poppins-SemiBold',
   },
 });

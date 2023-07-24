@@ -90,7 +90,6 @@ const Main = ({navigation}) => {
   };
 
   const addAttendanceHandler = (type, id) => {
-    let newDate = new Date();
     let subjId;
     attendance.map((ele, index) => {
       if (ele.id === id) {

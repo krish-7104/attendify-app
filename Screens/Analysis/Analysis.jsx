@@ -124,7 +124,7 @@ const Analysis = ({navigation}) => {
                         marginRight: 4,
                       }}></View>
                     <Text style={styles.subTitle}>
-                      Cancel: {subject.absent.length}
+                      Cancel: {subject.cancel.length}
                     </Text>
                   </View>
                 </View>

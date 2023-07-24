@@ -13,26 +13,36 @@ import EditAttend from './Screens/Edit Attendance/EditAttend';
 import Setting from './Screens/Settings/Setting';
 import Analysis from './Screens/Analysis/Analysis';
 import {Linking} from 'react-native';
+import {View, Image, StyleSheet, Text} from 'react-native';
 export default function App() {
   const Drawer = createDrawerNavigator();
   function CustomDrawerContent(props) {
     return (
       <DrawerContentScrollView
         {...props}
-        contentContainerStyle={{
-          paddingTop: 80,
-        }}>
+        contentContainerStyle={{paddingTop: 50, flex: 1}}>
+        <View style={styles.headerContainer}>
+          <Image source={require('./assets/logo.png')} style={styles.icon} />
+          <Text style={styles.title}>Attendify</Text>
+        </View>
         <DrawerItemList {...props} />
-        <DrawerItem
-          label="About Developer"
-          onPress={() => Linking.openURL('https://krishjotaniya.live')}
-        />
-        <DrawerItem
-          label="Feedback"
-          onPress={() =>
-            Linking.openURL('https://krishjotaniya.live/contactme')
-          }
-        />
+        <View
+          style={{
+            width: '100%',
+            position: 'absolute',
+            bottom: 20,
+          }}>
+          <DrawerItem
+            label="About Developer"
+            onPress={() => Linking.openURL('https://krishjotaniya.netlify.app')}
+          />
+          <DrawerItem
+            label="Feedback"
+            onPress={() =>
+              Linking.openURL('https://krishjotaniya.netlify.app/contactme')
+            }
+          />
+        </View>
       </DrawerContentScrollView>
     );
   }
@@ -52,3 +62,22 @@ export default function App() {
     </Provider>
   );
 }
+
+const styles = StyleSheet.create({
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+  },
+  icon: {
+    width: 40,
+    height: 40,
+    resizeMode: 'contain',
+    marginRight: 16,
+  },
+  title: {
+    fontSize: 20,
+    fontFamily: 'Poppins-SemiBold',
+    color: 'black',
+  },
+});
