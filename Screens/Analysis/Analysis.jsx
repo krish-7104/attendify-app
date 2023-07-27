@@ -1,8 +1,21 @@
 import {StyleSheet, Text, ScrollView, View} from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useLayoutEffect} from 'react';
 import Dashboard from '../Add Attendance/Dashboard';
 import {useSelector} from 'react-redux';
+import {
+  InterstitialAd,
+  TestIds,
+  AdEventType,
+} from 'react-native-google-mobile-ads';
+import {ANALYSIS_AD_ID} from '../../adsData';
+const adUnitId = __DEV__ ? TestIds.INTERSTITIAL : ANALYSIS_AD_ID;
+
+const interstitial = InterstitialAd.createForAdRequest(adUnitId, {
+  requestNonPersonalizedAdsOnly: true,
+  keywords: ['student', 'college', 'placements', 'career', 'coding'],
+});
+
 const Analysis = ({navigation}) => {
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -25,6 +38,19 @@ const Analysis = ({navigation}) => {
     });
   }, [navigation]);
   const data = useSelector(state => state);
+
+  useEffect(() => {
+    const unsubscribe = interstitial.addAdEventListener(
+      AdEventType.LOADED,
+      () => {
+        interstitial.show();
+      },
+    );
+
+    interstitial.load();
+
+    return unsubscribe;
+  }, []);
 
   return (
     <ScrollView contentContainerStyle={{alignItems: 'center'}}>

@@ -1,4 +1,4 @@
-package com.attendify;
+package com.krish.attendify;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

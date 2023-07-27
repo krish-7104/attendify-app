@@ -25,6 +25,7 @@ const Setting = ({navigation}) => {
               marginTop: 6,
               marginLeft: -8,
               color: '#181818',
+              fontFamily: 'Poppins-SemiBold',
             }}>
             Settings
           </Text>
@@ -34,10 +35,7 @@ const Setting = ({navigation}) => {
   }, [navigation]);
 
   const dispatch = useDispatch();
-  /**
-   * The function displays an alert asking the user to confirm if they want to delete attendance data
-   * and calls the deleteData function if the user selects "Yes".
-   */
+
   const confirmAlert = () => {
     Alert.alert(
       'Are You Sure?',
@@ -57,10 +55,6 @@ const Setting = ({navigation}) => {
     );
   };
 
-  /**
-   * The function deletes data, clears AsyncStorage, shows a toast message, and navigates to the Home
-   * screen.
-   */
   const deleteData = () => {
     dispatch(setValueHandler([]));
     AsyncStorage.clear();

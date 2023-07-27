@@ -14,6 +14,11 @@ import ChangeDate from '../Components/ChangeDate';
 import AttendDiv from './AttendDiv';
 import Dashboard from './Dashboard';
 import Icon from 'react-native-vector-icons/AntDesign';
+import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
+import {MAIN_AD_ID} from '../../adsData';
+
+const adUnitId = __DEV__ ? TestIds.BANNER : MAIN_AD_ID;
+
 const Main = ({navigation}) => {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState('');
@@ -258,6 +263,15 @@ const Main = ({navigation}) => {
           )}
         </>
       )}
+      {open && (
+        <BannerAd
+          unitId={adUnitId}
+          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          requestOptions={{
+            requestNonPersonalizedAdsOnly: true,
+          }}
+        />
+      )}
       <TouchableOpacity style={styles.addArea} onPress={() => setOpen(!open)}>
         {!open ? (
           <Text style={styles.addAttend}>Add Attendance</Text>
@@ -288,7 +302,7 @@ const styles = StyleSheet.create({
     width: '70%',
     borderRadius: 6,
     marginBottom: 12,
-    marginTop: 10,
+    marginTop: 12,
   },
   addAttend: {
     fontSize: 16,

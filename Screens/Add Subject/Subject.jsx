@@ -9,12 +9,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useLayoutEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icon1 from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import {setValueHandler} from '../../redux/actions';
+import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
+import {SUBJECT_AD_ID} from '../../adsData';
+const adUnitId = __DEV__ ? TestIds.BANNER : SUBJECT_AD_ID;
 
 const Subject = ({navigation}) => {
   const [input, setInput] = useState('');
@@ -22,6 +25,7 @@ const Subject = ({navigation}) => {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState();
+  const textInputRef = useRef(null);
 
   useEffect(() => {
     getAttendanceData();
@@ -122,6 +126,9 @@ const Subject = ({navigation}) => {
   const editBtnHandler = (id, name) => {
     setEditId(id);
     setInput(name);
+    if (!textInputRef.current.isFocused()) {
+      textInputRef.current.focus();
+    }
   };
 
   const saveEdithandler = () => {
@@ -164,8 +171,16 @@ const Subject = ({navigation}) => {
             })}
         </ScrollView>
       )}
+      <BannerAd
+        unitId={adUnitId}
+        size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+        requestOptions={{
+          requestNonPersonalizedAdsOnly: true,
+        }}
+      />
       <View style={styles.addSubjectArea}>
         <TextInput
+          ref={textInputRef}
           style={styles.input}
           value={input}
           placeholder="Enter Subject Here"
