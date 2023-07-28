@@ -39,7 +39,9 @@ export default function App() {
           <DrawerItem
             label="Feedback"
             onPress={() =>
-              Linking.openURL('https://krishjotaniya.netlify.app/contactme')
+              Linking.openURL(
+                'https://krishjotaniya.netlify.app/contactme?ref=Attendify',
+              )
             }
           />
         </View>
@@ -56,7 +58,7 @@ export default function App() {
           <Drawer.Screen name="Subject" component={Subject} />
           <Drawer.Screen name="Analysis" component={Analysis} />
           <Drawer.Screen name="Edit Attendance" component={EditAttend} />
-          <Drawer.Screen name="Reset App" component={Setting} />
+          <Drawer.Screen name="Settings" component={Setting} />
         </Drawer.Navigator>
       </NavigationContainer>
     </Provider>

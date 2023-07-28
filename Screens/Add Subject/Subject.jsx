@@ -220,6 +220,7 @@ const styles = StyleSheet.create({
   subListView: {
     width: '100%',
     flex: 1,
+    marginBottom: 10,
   },
   btnText: {
     color: '#fff',
