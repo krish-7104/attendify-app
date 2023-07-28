@@ -1,20 +1,11 @@
 import {StyleSheet, Text, ScrollView, View} from 'react-native';
-import React, {useEffect} from 'react';
+import React from 'react';
 import {useLayoutEffect} from 'react';
 import Dashboard from '../Add Attendance/Dashboard';
 import {useSelector} from 'react-redux';
-import {
-  InterstitialAd,
-  TestIds,
-  AdEventType,
-} from 'react-native-google-mobile-ads';
+import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
 import {ANALYSIS_AD_ID} from '../../adsData';
-const adUnitId = __DEV__ ? TestIds.INTERSTITIAL : ANALYSIS_AD_ID;
-
-const interstitial = InterstitialAd.createForAdRequest(adUnitId, {
-  requestNonPersonalizedAdsOnly: true,
-  keywords: ['student', 'college', 'placements', 'career', 'coding'],
-});
+const adUnitId = __DEV__ ? TestIds.BANNER : ANALYSIS_AD_ID;
 
 const Analysis = ({navigation}) => {
   useLayoutEffect(() => {
@@ -39,136 +30,136 @@ const Analysis = ({navigation}) => {
   }, [navigation]);
   const data = useSelector(state => state);
 
-  useEffect(() => {
-    const unsubscribe = interstitial.addAdEventListener(
-      AdEventType.LOADED,
-      () => {
-        interstitial.show();
-      },
-    );
-
-    interstitial.load();
-
-    return unsubscribe;
-  }, []);
-
   return (
-    <ScrollView contentContainerStyle={{alignItems: 'center'}}>
-      <Dashboard />
-      <Text
-        style={{
-          marginVertical: 14,
-          fontSize: 18,
-          fontFamily: 'Poppins-Medium',
-          color: '#181818',
-        }}>
-        Subject Wise Analysis
-      </Text>
-      <View
-        style={{
-          backgroundColor: '#fff',
-          width: '90%',
-          borderRadius: 10,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          elevation: 1,
-        }}>
-        {data.map((subject, index) => {
-          return (
-            <View style={styles.card} key={subject.id}>
-              <Text style={styles.title}>{subject.name}</Text>
-              <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}>
+    <View>
+      <ScrollView contentContainerStyle={{alignItems: 'center'}}>
+        <Dashboard />
+        <Text
+          style={{
+            marginVertical: 14,
+            fontSize: 18,
+            fontFamily: 'Poppins-Medium',
+            color: '#181818',
+          }}>
+          Subject Wise Analysis
+        </Text>
+        <View
+          style={{
+            backgroundColor: '#fff',
+            width: '90%',
+            borderRadius: 10,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            elevation: 1,
+          }}>
+          {data.map((subject, index) => {
+            if (index % 5 == 0 && index !== 0) {
+              return (
+                <BannerAd
+                  unitId={adUnitId}
+                  size={BannerAdSize.BANNER}
+                  requestOptions={{
+                    requestNonPersonalizedAdsOnly: true,
+                  }}
+                />
+              );
+            }
+            return (
+              <View style={styles.card} key={subject.id}>
+                <Text style={styles.title}>{subject.name}</Text>
                 <View
                   style={{
                     display: 'flex',
+                    flexDirection: 'row',
                     justifyContent: 'space-between',
-                    alignItems: 'flex-start',
+                    alignItems: 'center',
                   }}>
                   <View
                     style={{
                       display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
                     }}>
                     <View
-                      key={index}
                       style={{
-                        backgroundColor: '#4ade80',
-                        paddingHorizontal: 6,
-                        paddingVertical: 6,
-                        borderRadius: 30,
-                        marginRight: 4,
-                      }}></View>
-                    <Text style={styles.subTitle}>
-                      Present: {subject.present.length}/
-                      {subject.present.length + subject.absent.length}
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      flexDirection: 'row',
-                    }}>
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                      }}>
+                      <View
+                        key={index}
+                        style={{
+                          backgroundColor: '#4ade80',
+                          paddingHorizontal: 6,
+                          paddingVertical: 6,
+                          borderRadius: 30,
+                          marginRight: 4,
+                        }}></View>
+                      <Text style={styles.subTitle}>
+                        Present: {subject.present.length}/
+                        {subject.present.length + subject.absent.length}
+                      </Text>
+                    </View>
                     <View
-                      key={index}
                       style={{
-                        backgroundColor: '#f87171',
-                        paddingHorizontal: 6,
-                        paddingVertical: 6,
-                        borderRadius: 30,
-                        marginRight: 4,
-                      }}></View>
-                    <Text style={styles.subTitle}>
-                      Absent: {subject.absent.length}/
-                      {subject.present.length + subject.absent.length}
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      flexDirection: 'row',
-                    }}>
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                      }}>
+                      <View
+                        key={index}
+                        style={{
+                          backgroundColor: '#f87171',
+                          paddingHorizontal: 6,
+                          paddingVertical: 6,
+                          borderRadius: 30,
+                          marginRight: 4,
+                        }}></View>
+                      <Text style={styles.subTitle}>
+                        Absent: {subject.absent.length}/
+                        {subject.present.length + subject.absent.length}
+                      </Text>
+                    </View>
                     <View
-                      key={index}
                       style={{
-                        backgroundColor: '#60a5fa',
-                        paddingHorizontal: 6,
-                        paddingVertical: 6,
-                        borderRadius: 30,
-                        marginRight: 4,
-                      }}></View>
-                    <Text style={styles.subTitle}>
-                      Cancel: {subject?.cancel ? subject?.cancel?.length : 0}
-                    </Text>
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                      }}>
+                      <View
+                        key={index}
+                        style={{
+                          backgroundColor: '#60a5fa',
+                          paddingHorizontal: 6,
+                          paddingVertical: 6,
+                          borderRadius: 30,
+                          marginRight: 4,
+                        }}></View>
+                      <Text style={styles.subTitle}>
+                        Cancel: {subject?.cancel ? subject?.cancel?.length : 0}
+                      </Text>
+                    </View>
                   </View>
+                  <Text style={styles.totalPercentage}>
+                    {subject.present.length === 0 && subject.absent.length === 0
+                      ? 0
+                      : (
+                          (subject.present.length * 100) /
+                          (subject.present.length + subject.absent.length)
+                        ).toPrecision(4)}
+                    %
+                  </Text>
                 </View>
-                <Text style={styles.totalPercentage}>
-                  {subject.present.length === 0 && subject.absent.length === 0
-                    ? 0
-                    : (
-                        (subject.present.length * 100) /
-                        (subject.present.length + subject.absent.length)
-                      ).toPrecision(4)}
-                  %
-                </Text>
               </View>
-            </View>
-          );
-        })}
-      </View>
-    </ScrollView>
+            );
+          })}
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 

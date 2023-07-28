@@ -15,9 +15,6 @@ import Icon1 from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import {setValueHandler} from '../../redux/actions';
-import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
-import {SUBJECT_AD_ID} from '../../adsData';
-const adUnitId = __DEV__ ? TestIds.BANNER : SUBJECT_AD_ID;
 
 const Subject = ({navigation}) => {
   const [input, setInput] = useState('');
@@ -171,13 +168,6 @@ const Subject = ({navigation}) => {
             })}
         </ScrollView>
       )}
-      <BannerAd
-        unitId={adUnitId}
-        size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-        requestOptions={{
-          requestNonPersonalizedAdsOnly: true,
-        }}
-      />
       <View style={styles.addSubjectArea}>
         <TextInput
           ref={textInputRef}
