@@ -19,6 +19,7 @@ import {
   TestIds,
   BannerAd,
   BannerAdSize,
+  AdEventType,
 } from 'react-native-google-mobile-ads';
 
 import {SETTIND_INTERSTITIAL_AD_ID} from '../../adsData';
@@ -35,9 +36,16 @@ const interstitial = InterstitialAd.createForAdRequest(adUnitIdInterstitial, {
   keywords: ['student', 'college', 'placements', 'career', 'coding'],
 });
 const Setting = ({navigation}) => {
-  const attendance = useSelector(state => state);
   useEffect(() => {
+    const unsubscribe = interstitial.addAdEventListener(
+      AdEventType.LOADED,
+      () => {
+        interstitial.show();
+      },
+    );
     interstitial.load();
+
+    return unsubscribe;
   }, []);
 
   useLayoutEffect(() => {
@@ -86,9 +94,6 @@ const Setting = ({navigation}) => {
     dispatch(setValueHandler([]));
     AsyncStorage.clear();
     ToastAndroid.show('Attendance Reset!', ToastAndroid.SHORT);
-    setTimeout(() => {
-      interstitial.show();
-    }, 1400);
   };
 
   return (
@@ -101,10 +106,6 @@ const Setting = ({navigation}) => {
         </Text>
       </View>
       <View style={styles.lowerDiv}>
-        <TouchableOpacity style={styles.deleteBtn} onPress={confirmAlert}>
-          <Text style={styles.deleteText}>Delete All Data</Text>
-          <Icon name="delete-outline" size={24} color="white" />
-        </TouchableOpacity>
         <BannerAd
           unitId={adUnitIdBanner}
           size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
@@ -112,6 +113,10 @@ const Setting = ({navigation}) => {
             requestNonPersonalizedAdsOnly: true,
           }}
         />
+        <TouchableOpacity style={styles.deleteBtn} onPress={confirmAlert}>
+          <Text style={styles.deleteText}>Delete All Data</Text>
+          <Icon name="delete-outline" size={24} color="white" />
+        </TouchableOpacity>
       </View>
     </View>
   );

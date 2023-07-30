@@ -54,17 +54,6 @@ const Analysis = ({navigation}) => {
             elevation: 1,
           }}>
           {data.map((subject, index) => {
-            if (index % 5 == 0 && index !== 0) {
-              return (
-                <BannerAd
-                  unitId={adUnitId}
-                  size={BannerAdSize.BANNER}
-                  requestOptions={{
-                    requestNonPersonalizedAdsOnly: true,
-                  }}
-                />
-              );
-            }
             return (
               <View style={styles.card} key={subject.id}>
                 <Text style={styles.title}>{subject.name}</Text>
@@ -157,6 +146,15 @@ const Analysis = ({navigation}) => {
               </View>
             );
           })}
+        </View>
+        <View style={{marginVertical: 10}}>
+          <BannerAd
+            unitId={adUnitId}
+            size={BannerAdSize.BANNER}
+            requestOptions={{
+              requestNonPersonalizedAdsOnly: true,
+            }}
+          />
         </View>
       </ScrollView>
     </View>
