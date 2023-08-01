@@ -146,8 +146,6 @@ const Analysis = ({navigation}) => {
               </View>
             );
           })}
-        </View>
-        <View style={{marginVertical: 10}}>
           <BannerAd
             unitId={adUnitId}
             size={BannerAdSize.BANNER}

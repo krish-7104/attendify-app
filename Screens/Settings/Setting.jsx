@@ -16,24 +16,11 @@ import DocumentPicker from 'react-native-document-picker';
 import {extname} from 'path';
 import RNFS from 'react-native-fs';
 import * as ScopedStorage from 'react-native-scoped-storage';
-import {
-  InterstitialAd,
-  TestIds,
-  BannerAd,
-  BannerAdSize,
-} from 'react-native-google-mobile-ads';
-import {SETTIND_AD_ID} from '../../adsData';
+import {TestIds, BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
 import {SETTIND_BANNER_AD_ID} from '../../adsData';
-const adUnitId = __DEV__ ? TestIds.INTERSTITIAL : SETTIND_AD_ID;
-const interstitial = InterstitialAd.createForAdRequest(adUnitId, {
-  requestNonPersonalizedAdsOnly: true,
-  keywords: ['student', 'college', 'placements', 'career', 'coding'],
-});
+const adUnitIdBanner = __DEV__ ? TestIds.BANNER : SETTIND_BANNER_AD_ID;
 const Setting = ({navigation}) => {
   const attendance = useSelector(state => state);
-  useEffect(() => {
-    interstitial.load();
-  }, []);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -93,7 +80,6 @@ const Setting = ({navigation}) => {
       'text/plain',
     );
     ToastAndroid.show('Attendance File Exported!', ToastAndroid.BOTTOM);
-    interstitial.show();
   };
 
   const importAttendanceData = async () => {
@@ -122,7 +108,6 @@ const Setting = ({navigation}) => {
         console.log(e);
       }
       ToastAndroid.show('Attendance File Imported!', ToastAndroid.BOTTOM);
-      interstitial.show();
     } catch (error) {
       console.log('Error importing attendance data:', error);
     }
@@ -161,7 +146,7 @@ const Setting = ({navigation}) => {
         />
       </TouchableOpacity>
       <BannerAd
-        unitId={SETTIND_BANNER_AD_ID}
+        unitId={adUnitIdBanner}
         size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
         requestOptions={{
           requestNonPersonalizedAdsOnly: true,
