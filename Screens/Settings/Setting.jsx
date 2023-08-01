@@ -5,47 +5,34 @@ import {
   TouchableOpacity,
   ToastAndroid,
   Alert,
-  Platform,
-  PermissionsAndroid,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {setValueHandler} from '../../redux/actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useLayoutEffect} from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import DocumentPicker from 'react-native-document-picker';
+import {extname} from 'path';
+import RNFS from 'react-native-fs';
+import * as ScopedStorage from 'react-native-scoped-storage';
 import {
   InterstitialAd,
   TestIds,
   BannerAd,
   BannerAdSize,
-  AdEventType,
 } from 'react-native-google-mobile-ads';
-
-import {SETTIND_INTERSTITIAL_AD_ID} from '../../adsData';
+import {SETTIND_AD_ID} from '../../adsData';
 import {SETTIND_BANNER_AD_ID} from '../../adsData';
-
-const adUnitIdInterstitial = __DEV__
-  ? TestIds.INTERSTITIAL
-  : SETTIND_INTERSTITIAL_AD_ID;
-
-const adUnitIdBanner = __DEV__ ? TestIds.BANNER : SETTIND_BANNER_AD_ID;
-
-const interstitial = InterstitialAd.createForAdRequest(adUnitIdInterstitial, {
+const adUnitId = __DEV__ ? TestIds.INTERSTITIAL : SETTIND_AD_ID;
+const interstitial = InterstitialAd.createForAdRequest(adUnitId, {
   requestNonPersonalizedAdsOnly: true,
   keywords: ['student', 'college', 'placements', 'career', 'coding'],
 });
 const Setting = ({navigation}) => {
+  const attendance = useSelector(state => state);
   useEffect(() => {
-    const unsubscribe = interstitial.addAdEventListener(
-      AdEventType.LOADED,
-      () => {
-        interstitial.show();
-      },
-    );
     interstitial.load();
-
-    return unsubscribe;
   }, []);
 
   useLayoutEffect(() => {
@@ -93,31 +80,93 @@ const Setting = ({navigation}) => {
   const deleteData = () => {
     dispatch(setValueHandler([]));
     AsyncStorage.clear();
-    ToastAndroid.show('Attendance Reset!', ToastAndroid.SHORT);
+    ToastAndroid.show('Data Cleared!', ToastAndroid.SHORT);
+    navigation.navigate('Home');
   };
 
+  const exportAttendanceData = async () => {
+    let dir = await ScopedStorage.openDocumentTree(true);
+    await ScopedStorage.writeFile(
+      dir.uri,
+      JSON.stringify(attendance),
+      'attendance.attendify',
+      'text/plain',
+    );
+    ToastAndroid.show('Attendance File Exported!', ToastAndroid.BOTTOM);
+    interstitial.show();
+  };
+
+  const importAttendanceData = async () => {
+    try {
+      const result = await DocumentPicker.pick({
+        type: [DocumentPicker.types.allFiles],
+      });
+      const {uri, name} = result[0];
+      if (extname(name) !== '.attendify') {
+        Alert.alert(
+          'Error',
+          'Invalid file format. Only .attendify files are allowed.',
+        );
+        return;
+      }
+      const jsonData = await RNFS.readFile(uri, 'utf8');
+      const importedAttendanceData = JSON.parse(jsonData);
+
+      dispatch(setValueHandler(importedAttendanceData));
+      try {
+        await AsyncStorage.setItem(
+          'attendance',
+          JSON.stringify(importedAttendanceData),
+        );
+      } catch (e) {
+        console.log(e);
+      }
+      ToastAndroid.show('Attendance File Imported!', ToastAndroid.BOTTOM);
+      interstitial.show();
+    } catch (error) {
+      console.log('Error importing attendance data:', error);
+    }
+  };
   return (
     <View style={styles.container}>
-      <View style={styles.warnDiv}>
-        <Text style={styles.title}>Danger Zone</Text>
-        <Text style={styles.subtitle}>
-          All attendance data and subjects will be deleted and cannot be
-          restored
-        </Text>
-      </View>
-      <View style={styles.lowerDiv}>
-        <BannerAd
-          unitId={adUnitIdBanner}
-          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-          requestOptions={{
-            requestNonPersonalizedAdsOnly: true,
-          }}
+      <TouchableOpacity
+        style={styles.importBtn}
+        onPress={importAttendanceData}
+        activeOpacity={0.5}>
+        <Text style={styles.importTxt}>Import Attendance</Text>
+        <Icon name="upload" style={{marginRight: 6}} size={24} color="black" />
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.importBtn}
+        onPress={exportAttendanceData}
+        activeOpacity={0.5}>
+        <Text style={styles.importTxt}>Export Attendance</Text>
+        <Icon
+          name="download"
+          style={{marginRight: 6}}
+          size={24}
+          color="black"
         />
-        <TouchableOpacity style={styles.deleteBtn} onPress={confirmAlert}>
-          <Text style={styles.deleteText}>Delete All Data</Text>
-          <Icon name="delete-outline" size={24} color="white" />
-        </TouchableOpacity>
-      </View>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.deleteBtn}
+        onPress={confirmAlert}
+        activeOpacity={0.5}>
+        <Text style={styles.deleteText}>Delete All Data</Text>
+        <Icon
+          name="delete-outline"
+          style={{marginRight: 6}}
+          size={24}
+          color="white"
+        />
+      </TouchableOpacity>
+      <BannerAd
+        unitId={SETTIND_BANNER_AD_ID}
+        size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+        requestOptions={{
+          requestNonPersonalizedAdsOnly: true,
+        }}
+      />
     </View>
   );
 };
@@ -131,41 +180,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  warnDiv: {
-    position: 'absolute',
-    marginTop: 30,
-    top: 0,
-    backgroundColor: '#fff',
-    width: '80%',
+  importBtn: {
+    marginVertical: 15,
+    width: '70%',
+    fontSize: 18,
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    borderRadius: 10,
+    flexDirection: 'row',
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1.4,
   },
-  title: {
-    fontSize: 22,
-    fontFamily: 'Poppins-SemiBold',
-    color: '#181818',
-  },
-  subtitle: {
-    marginTop: 12,
-    fontSize: 16,
-    textAlign: 'center',
+  importTxt: {
+    color: 'black',
+    fontSize: 18,
+    marginRight: 6,
+    fontWeight: '600',
     fontFamily: 'Poppins-Medium',
-    color: '#181818',
-  },
-  lowerDiv: {
-    position: 'absolute',
-    bottom: 0,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flex: 1,
+    textAlign: 'center',
   },
   deleteBtn: {
     marginVertical: 15,
-    backgroundColor: '#18181b',
-    width: '95%',
+    backgroundColor: '#ef4444',
+    width: '70%',
     fontSize: 18,
     display: 'flex',
     justifyContent: 'center',
@@ -179,5 +217,7 @@ const styles = StyleSheet.create({
     marginRight: 6,
     fontWeight: '600',
     fontFamily: 'Poppins-Medium',
+    flex: 1,
+    textAlign: 'center',
   },
 });
