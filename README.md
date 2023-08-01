@@ -5,7 +5,7 @@ Attendify is a convenient and easy-to-use attendance tracker designed specifical
 
 ## Download App
 
-https://drive.google.com/file/d/1T_tDxzGHpanS59DrP0rqun6FGQrKvlx5/view?usp=sharing
+https://play.google.com/store/apps/details?id=com.krish.attendify
 
 ## Tech Stack
 
