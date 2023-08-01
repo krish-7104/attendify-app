@@ -16,10 +16,30 @@ import DocumentPicker from 'react-native-document-picker';
 import {extname} from 'path';
 import RNFS from 'react-native-fs';
 import * as ScopedStorage from 'react-native-scoped-storage';
-import {TestIds, BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
+import {
+  InterstitialAd,
+  TestIds,
+  BannerAd,
+  BannerAdSize,
+} from 'react-native-google-mobile-ads';
+import {SETTIND_INTERSTITIAL_AD_ID} from '../../adsData';
 import {SETTIND_BANNER_AD_ID} from '../../adsData';
+
+const adUnitIdInterstitial = __DEV__
+  ? TestIds.INTERSTITIAL
+  : SETTIND_INTERSTITIAL_AD_ID;
+
 const adUnitIdBanner = __DEV__ ? TestIds.BANNER : SETTIND_BANNER_AD_ID;
+
+const interstitial = InterstitialAd.createForAdRequest(adUnitIdInterstitial, {
+  requestNonPersonalizedAdsOnly: true,
+  keywords: ['student', 'college', 'placements', 'career', 'coding'],
+});
 const Setting = ({navigation}) => {
+  useEffect(() => {
+    interstitial.load();
+  }, []);
+
   const attendance = useSelector(state => state);
 
   useLayoutEffect(() => {
@@ -80,6 +100,9 @@ const Setting = ({navigation}) => {
       'text/plain',
     );
     ToastAndroid.show('Attendance File Exported!', ToastAndroid.BOTTOM);
+    if (interstitial) {
+      interstitial.show();
+    }
   };
 
   const importAttendanceData = async () => {
@@ -108,6 +131,9 @@ const Setting = ({navigation}) => {
         console.log(e);
       }
       ToastAndroid.show('Attendance File Imported!', ToastAndroid.BOTTOM);
+      if (interstitial) {
+        interstitial.show();
+      }
     } catch (error) {
       console.log('Error importing attendance data:', error);
     }
@@ -145,13 +171,15 @@ const Setting = ({navigation}) => {
           color="white"
         />
       </TouchableOpacity>
-      <BannerAd
-        unitId={adUnitIdBanner}
-        size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-        requestOptions={{
-          requestNonPersonalizedAdsOnly: true,
-        }}
-      />
+      <View style={{position: 'absolute', bottom: 10}}>
+        <BannerAd
+          unitId={adUnitIdBanner}
+          size={BannerAdSize.BANNER}
+          requestOptions={{
+            requestNonPersonalizedAdsOnly: true,
+          }}
+        />
+      </View>
     </View>
   );
 };
