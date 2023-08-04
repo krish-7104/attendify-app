@@ -1,7 +1,7 @@
 import {StyleSheet, Text, ScrollView, View} from 'react-native';
 import React from 'react';
 import {useLayoutEffect} from 'react';
-import Dashboard from '../Add Attendance/Dashboard';
+import Dashboard from '../../Components/Dashboard';
 import {useSelector} from 'react-redux';
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
 import {ANALYSIS_AD_ID} from '../../adsData';

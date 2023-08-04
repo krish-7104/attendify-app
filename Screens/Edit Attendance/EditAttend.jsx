@@ -11,8 +11,8 @@ import React, {useEffect, useLayoutEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import {setValueHandler} from '../../redux/actions';
-import ChangeDate from '../Components/ChangeDate';
-import EditDiv from './EditDiv';
+import ChangeDate from '../../Components/ChangeDate';
+import EditDiv from '../../Components/EditDiv';
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
 import {EDIT_AD_ID} from '../../adsData';
 

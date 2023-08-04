@@ -1,4 +1,7 @@
 {
   "name": "Attendify",
-  "displayName": "Attendify"
+  "displayName": "Attendify",
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-6116422903517331~7908687673"
+  }
 }

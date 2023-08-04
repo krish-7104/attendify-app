@@ -10,9 +10,9 @@ import React, {useEffect, useLayoutEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import {setValueHandler} from '../../redux/actions';
-import ChangeDate from '../Components/ChangeDate';
-import AttendDiv from './AttendDiv';
-import Dashboard from './Dashboard';
+import ChangeDate from '../../Components/ChangeDate';
+import AttendDiv from '../../Components/AttendDiv';
+import Dashboard from '../../Components/Dashboard';
 import Icon from 'react-native-vector-icons/AntDesign';
 
 const Main = ({navigation}) => {

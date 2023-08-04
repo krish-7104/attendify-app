@@ -97,7 +97,6 @@ const Setting = ({navigation}) => {
       dir.uri,
       JSON.stringify(attendance),
       'attendance.attendify',
-      'text/plain',
     );
     ToastAndroid.show('Attendance File Exported!', ToastAndroid.BOTTOM);
     if (interstitial) {
@@ -140,6 +139,10 @@ const Setting = ({navigation}) => {
   };
   return (
     <View style={styles.container}>
+      <Text style={styles.description}>
+        You can export attendance and store it on your drive or any other
+        storage and then you can import it.
+      </Text>
       <TouchableOpacity
         style={styles.importBtn}
         onPress={importAttendanceData}
@@ -192,6 +195,14 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  description: {
+    color: 'black',
+    fontSize: 14,
+    fontWeight: '600',
+    fontFamily: 'Poppins-Medium',
+    textAlign: 'center',
+    width: '80%',
   },
   importBtn: {
     marginVertical: 15,
