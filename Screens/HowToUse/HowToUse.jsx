@@ -6,7 +6,7 @@ const HowToUse = ({navigation}) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTintColor: 'black',
-      title: 'Settings',
+      title: 'How To Use',
       headerTitle: () => {
         return (
           <Text
@@ -26,7 +26,7 @@ const HowToUse = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.text}>
-        1. Go to Subjects screen from top left menu znd add your subjects.
+        1. Go to Subjects screen from top left menu add your subjects.
       </Text>
       <Text style={styles.text}>
         2. You can also edit the subjects by clicking on the name of the
