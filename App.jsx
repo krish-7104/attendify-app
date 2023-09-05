@@ -12,6 +12,7 @@ import Subject from './Screens/Add Subject/Subject';
 import EditAttend from './Screens/Edit Attendance/EditAttend';
 import Setting from './Screens/Settings/Setting';
 import Analysis from './Screens/Analysis/Analysis';
+import HowToUse from './Screens/HowToUse/HowToUse';
 import {Linking} from 'react-native';
 import {View, Image, StyleSheet, Text} from 'react-native';
 export default function App() {
@@ -58,6 +59,7 @@ export default function App() {
           <Drawer.Screen name="Subject" component={Subject} />
           <Drawer.Screen name="Analysis" component={Analysis} />
           <Drawer.Screen name="Edit Attendance" component={EditAttend} />
+          <Drawer.Screen name="How To Use" component={HowToUse} />
           <Drawer.Screen name="Settings" component={Setting} />
         </Drawer.Navigator>
       </NavigationContainer>
