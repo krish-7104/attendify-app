@@ -15,17 +15,6 @@ import Icon1 from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import {setValueHandler} from '../../redux/actions';
-import {SUBJECT_AD_ID} from '../../adsData';
-import {
-  InterstitialAd,
-  TestIds,
-  AdEventType,
-} from 'react-native-google-mobile-ads';
-const adUnitIdInterstitial = __DEV__ ? TestIds.INTERSTITIAL : SUBJECT_AD_ID;
-const interstitial = InterstitialAd.createForAdRequest(adUnitIdInterstitial, {
-  requestNonPersonalizedAdsOnly: true,
-  keywords: ['student', 'college', 'placements', 'career', 'coding'],
-});
 
 const Subject = ({navigation}) => {
   const [input, setInput] = useState('');
@@ -34,18 +23,6 @@ const Subject = ({navigation}) => {
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState();
   const textInputRef = useRef(null);
-
-  useEffect(() => {
-    const unsubscribe = interstitial.addAdEventListener(
-      AdEventType.LOADED,
-      () => {
-        interstitial.show();
-      },
-    );
-    interstitial.load();
-
-    return unsubscribe;
-  }, []);
 
   useEffect(() => {
     getAttendanceData();

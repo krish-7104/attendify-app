@@ -69,10 +69,10 @@ const styles = StyleSheet.create({
     paddingTop: 14,
   },
   text: {
-    fontFamily: 'Poppins-Normal',
+    fontFamily: 'Poppins-Medium',
     color: 'black',
-    marginVertical: 4,
+    marginVertical: 6,
     fontSize: 15,
-    lineHeight: 20,
+    lineHeight: 24,
   },
 });
