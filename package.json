@@ -10,10 +10,12 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-native-admob/admob": "^2.0.1",
     "@react-native-async-storage/async-storage": "^1.17.11",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/drawer": "^6.6.2",
     "@react-navigation/native": "^6.1.6",
+    "dotenv": "^16.3.1",
     "path": "^0.12.7",
     "react": "18.2.0",
     "react-native": "0.71.4",
@@ -28,7 +30,8 @@
     "react-native-vector-icons": "^9.2.0",
     "react-redux": "^8.0.5",
     "redux": "^4.2.1",
-    "redux-thunk": "^2.4.2"
+    "redux-thunk": "^2.4.2",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

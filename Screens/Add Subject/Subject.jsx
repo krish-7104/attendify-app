@@ -1,5 +1,6 @@
 import {
   Alert,
+  FlatList,
   Keyboard,
   ScrollView,
   StyleSheet,
@@ -94,7 +95,6 @@ const Subject = ({navigation}) => {
       setInput('');
       Keyboard.dismiss();
       setOpen(!open);
-      ToastAndroid.show('Subject Added!', ToastAndroid.SHORT);
     }
   };
 
@@ -140,20 +140,22 @@ const Subject = ({navigation}) => {
     ToastAndroid.show('Subject Name Changed!', ToastAndroid.SHORT);
   };
   return (
-    <View style={styles.container}>
-      {attendance && attendance.length === 0 ? (
-        <View style={styles.noSubDiv}>
-          <Text style={styles.noSubText}>Add Subjects!</Text>
-        </View>
-      ) : (
-        <ScrollView
-          style={styles.subListView}
-          contentContainerStyle={{alignItems: 'center'}}>
-          {attendance &&
-            attendance.map(item => {
-              return (
+    <AppOpenAdProvider
+      unitId={TestIds.APP_OPEN}
+      options={{showOnColdStart: true, loadOnDismissed: splashDismissed}}>
+      {splashDismissed ? (
+        <View style={styles.container}>
+          {attendance && attendance.length === 0 ? (
+            <View style={styles.noSubDiv}>
+              <Text style={styles.noSubText}>Add Subjects!</Text>
+            </View>
+          ) : (
+            <FlatList
+              style={styles.subListView}
+              data={attendance}
+              keyExtractor={item => item.id.toString()}
+              renderItem={({item}) => (
                 <TouchableOpacity
-                  key={item.id}
                   style={styles.indiSubArea}
                   onPress={() => editBtnHandler(item.id, item.name)}>
                   <Text style={styles.indiSubName}>{item.name}</Text>
@@ -164,37 +166,40 @@ const Subject = ({navigation}) => {
                     <Icon1 name="delete-outline" size={24} color="#181818" />
                   </TouchableOpacity>
                 </TouchableOpacity>
-              );
-            })}
-        </ScrollView>
+              )}
+            />
+          )}
+          <View style={styles.addSubjectArea}>
+            <TextInput
+              ref={textInputRef}
+              style={styles.input}
+              value={input}
+              placeholder="Enter Subject Here"
+              placeholderTextColor="#5A5A5A"
+              onChangeText={text => setInput(text)}
+              onSubmitEditing={addSubjectHandler}
+            />
+            {editId ? (
+              <TouchableOpacity
+                style={styles.addSubjectBtn}
+                activeOpacity={0.4}
+                onPress={saveEdithandler}>
+                <Icon1 name="done" size={24} color="#fff" />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={styles.addSubjectBtn}
+                activeOpacity={0.4}
+                onPress={addSubjectHandler}>
+                <Icon name="plus" size={24} color="#f5f5f5" />
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      ) : (
+        <SplashScreen onSplashDismissed={() => setSplashDismissed(true)} />
       )}
-      <View style={styles.addSubjectArea}>
-        <TextInput
-          ref={textInputRef}
-          style={styles.input}
-          value={input}
-          placeholder="Enter Subject Here"
-          placeholderTextColor="#5A5A5A"
-          onChangeText={text => setInput(text)}
-          onSubmitEditing={addSubjectHandler}
-        />
-        {editId ? (
-          <TouchableOpacity
-            style={styles.addSubjectBtn}
-            activeOpacity={0.4}
-            onPress={saveEdithandler}>
-            <Icon1 name="done" size={24} color="#fff" />
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={styles.addSubjectBtn}
-            activeOpacity={0.4}
-            onPress={addSubjectHandler}>
-            <Icon name="plus" size={24} color="#f5f5f5" />
-          </TouchableOpacity>
-        )}
-      </View>
-    </View>
+    </AppOpenAdProvider>
   );
 };
 
@@ -208,7 +213,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   subListView: {
-    width: '100%',
+    width: '90%',
     flex: 1,
   },
   btnText: {
@@ -237,7 +242,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     alignItems: 'center',
     marginTop: 12,
-    width: '90%',
+    width: '100%',
   },
   indiSubName: {
     fontSize: 14,

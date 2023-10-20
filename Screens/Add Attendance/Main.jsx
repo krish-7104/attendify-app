@@ -154,7 +154,6 @@ const Main = ({navigation}) => {
       }
     }
     setOpen(!open);
-    ToastAndroid.show('Attendance Added!', ToastAndroid.SHORT);
   };
 
   const openAddSubjectPage = () => {

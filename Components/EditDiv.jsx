@@ -103,7 +103,7 @@ export default EditDiv;
 
 const styles = StyleSheet.create({
   div: {
-    width: '90%',
+    width: '100%',
     backgroundColor: '#fff',
     paddingHorizontal: 12,
     paddingVertical: 14,
