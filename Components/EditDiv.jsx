@@ -24,75 +24,73 @@ const EditDiv = props => {
               ).toPrecision(4) +
               '%)'}
           </Text>
-          <View
+          <TouchableOpacity
+            onPress={() => props.removeAttendanceHandler(props.id, props.date)}
+            activeOpacity={0.4}
             style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              flexDirection: 'row',
+              padding: 3,
+              borderRadius: 4,
+              marginRight: 10,
             }}>
-            {props.present &&
-              props.present.map((indi, index) => {
-                if (indi === props.date) {
-                  return (
-                    <View
-                      key={index}
-                      style={{
-                        backgroundColor: '#4ade80',
-                        paddingHorizontal: 8,
-                        paddingVertical: 8,
-                        borderRadius: 30,
-                        marginRight: 6,
-                      }}></View>
-                  );
-                }
-              })}
-            {props.absent &&
-              props.absent.map((indi, index) => {
-                if (indi === props.date) {
-                  return (
-                    <View
-                      key={index}
-                      style={{
-                        backgroundColor: '#f87171',
-                        paddingHorizontal: 8,
-                        paddingVertical: 8,
-                        borderRadius: 30,
-                        marginRight: 6,
-                      }}></View>
-                  );
-                }
-              })}
-            {props.cancel &&
-              props.cancel.map((indi, index) => {
-                if (indi === props.date) {
-                  return (
-                    <View
-                      key={index}
-                      style={{
-                        backgroundColor: '#60a5fa',
-                        paddingHorizontal: 8,
-                        paddingVertical: 8,
-                        borderRadius: 30,
-                        marginRight: 6,
-                      }}></View>
-                  );
-                }
-              })}
-
-            <TouchableOpacity
-              onPress={() =>
-                props.removeAttendanceHandler(props.id, props.date)
+            <Icon name="delete-outline" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
+        <View
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'row',
+            marginTop: 6,
+          }}>
+          {props.present &&
+            props.present.map((indi, index) => {
+              if (indi === props.date) {
+                return (
+                  <View
+                    key={index}
+                    style={{
+                      backgroundColor: '#4ade80',
+                      paddingHorizontal: 8,
+                      paddingVertical: 8,
+                      borderRadius: 30,
+                      marginRight: 6,
+                    }}></View>
+                );
               }
-              activeOpacity={0.4}
-              style={{
-                padding: 3,
-                borderRadius: 4,
-                marginRight: 10,
-              }}>
-              <Icon name="delete-outline" size={24} color="black" />
-            </TouchableOpacity>
-          </View>
+            })}
+          {props.absent &&
+            props.absent.map((indi, index) => {
+              if (indi === props.date) {
+                return (
+                  <View
+                    key={index}
+                    style={{
+                      backgroundColor: '#f87171',
+                      paddingHorizontal: 8,
+                      paddingVertical: 8,
+                      borderRadius: 30,
+                      marginRight: 6,
+                    }}></View>
+                );
+              }
+            })}
+          {props.cancel &&
+            props.cancel.map((indi, index) => {
+              if (indi === props.date) {
+                return (
+                  <View
+                    key={index}
+                    style={{
+                      backgroundColor: '#60a5fa',
+                      paddingHorizontal: 8,
+                      paddingVertical: 8,
+                      borderRadius: 30,
+                      marginRight: 6,
+                    }}></View>
+                );
+              }
+            })}
         </View>
       </View>
     );
@@ -133,13 +131,11 @@ const styles = StyleSheet.create({
   },
   subName: {
     fontSize: 16,
-    marginBottom: 4,
     fontFamily: 'Poppins-Medium',
     color: '#181818',
   },
   subData: {
     fontSize: 15,
-    marginTop: 4,
     letterSpacing: 1,
     fontFamily: 'Poppins-Regular',
     color: '#181818',

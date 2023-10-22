@@ -16,8 +16,11 @@ import DocumentPicker from 'react-native-document-picker';
 import {extname} from 'path';
 import RNFS from 'react-native-fs';
 import * as ScopedStorage from 'react-native-scoped-storage';
+import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
+import {SETTINGS_BANNER} from '../../adsdata';
 
 const Setting = ({navigation}) => {
+  const adUnitId = __DEV__ ? TestIds.BANNER : SETTINGS_BANNER;
   const attendance = useSelector(state => state);
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -114,6 +117,7 @@ const Setting = ({navigation}) => {
       console.log('Error importing attendance data:', error);
     }
   };
+
   return (
     <View style={styles.container}>
       <Text style={styles.description}>
@@ -151,6 +155,15 @@ const Setting = ({navigation}) => {
           color="white"
         />
       </TouchableOpacity>
+      <View style={{position: 'absolute', bottom: 10}}>
+        <BannerAd
+          unitId={adUnitId}
+          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          requestOptions={{
+            requestNonPersonalizedAdsOnly: true,
+          }}
+        />
+      </View>
     </View>
   );
 };

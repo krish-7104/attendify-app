@@ -16,7 +16,12 @@ import Icon1 from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import {setValueHandler} from '../../redux/actions';
-
+import {
+  InterstitialAd,
+  AdEventType,
+  TestIds,
+} from 'react-native-google-mobile-ads';
+import {STUDENT_INTERSTITIAL} from '../../adsdata';
 const Subject = ({navigation}) => {
   const [input, setInput] = useState('');
   const attendance = useSelector(state => state);
@@ -24,6 +29,24 @@ const Subject = ({navigation}) => {
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState();
   const textInputRef = useRef(null);
+
+  const adUnitId = __DEV__ ? TestIds.INTERSTITIAL : STUDENT_INTERSTITIAL;
+
+  const interstitial = InterstitialAd.createForAdRequest(adUnitId, {
+    requestNonPersonalizedAdsOnly: true,
+    keywords: ['student', 'college', 'attendance', 'study', 'engineering'],
+  });
+
+  useEffect(() => {
+    const unsubscribe = interstitial.addAdEventListener(
+      AdEventType.LOADED,
+      () => {
+        interstitial.show();
+      },
+    );
+
+    return unsubscribe;
+  }, []);
 
   useEffect(() => {
     getAttendanceData();
@@ -78,6 +101,7 @@ const Subject = ({navigation}) => {
   };
 
   const addSubjectHandler = () => {
+    interstitial.load();
     let id = Math.round(Math.random() * 10000);
     if (input.length !== 0) {
       dispatch(
@@ -140,66 +164,58 @@ const Subject = ({navigation}) => {
     ToastAndroid.show('Subject Name Changed!', ToastAndroid.SHORT);
   };
   return (
-    <AppOpenAdProvider
-      unitId={TestIds.APP_OPEN}
-      options={{showOnColdStart: true, loadOnDismissed: splashDismissed}}>
-      {splashDismissed ? (
-        <View style={styles.container}>
-          {attendance && attendance.length === 0 ? (
-            <View style={styles.noSubDiv}>
-              <Text style={styles.noSubText}>Add Subjects!</Text>
-            </View>
-          ) : (
-            <FlatList
-              style={styles.subListView}
-              data={attendance}
-              keyExtractor={item => item.id.toString()}
-              renderItem={({item}) => (
-                <TouchableOpacity
-                  style={styles.indiSubArea}
-                  onPress={() => editBtnHandler(item.id, item.name)}>
-                  <Text style={styles.indiSubName}>{item.name}</Text>
-                  <TouchableOpacity
-                    style={styles.deleteBtn}
-                    activeOpacity={0.4}
-                    onPress={() => removeSubjectHandler(item.id)}>
-                    <Icon1 name="delete-outline" size={24} color="#181818" />
-                  </TouchableOpacity>
-                </TouchableOpacity>
-              )}
-            />
-          )}
-          <View style={styles.addSubjectArea}>
-            <TextInput
-              ref={textInputRef}
-              style={styles.input}
-              value={input}
-              placeholder="Enter Subject Here"
-              placeholderTextColor="#5A5A5A"
-              onChangeText={text => setInput(text)}
-              onSubmitEditing={addSubjectHandler}
-            />
-            {editId ? (
-              <TouchableOpacity
-                style={styles.addSubjectBtn}
-                activeOpacity={0.4}
-                onPress={saveEdithandler}>
-                <Icon1 name="done" size={24} color="#fff" />
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                style={styles.addSubjectBtn}
-                activeOpacity={0.4}
-                onPress={addSubjectHandler}>
-                <Icon name="plus" size={24} color="#f5f5f5" />
-              </TouchableOpacity>
-            )}
-          </View>
+    <View style={styles.container}>
+      {attendance && attendance.length === 0 ? (
+        <View style={styles.noSubDiv}>
+          <Text style={styles.noSubText}>Add Subjects!</Text>
         </View>
       ) : (
-        <SplashScreen onSplashDismissed={() => setSplashDismissed(true)} />
+        <FlatList
+          style={styles.subListView}
+          data={attendance}
+          keyExtractor={item => item.id.toString()}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              style={styles.indiSubArea}
+              onPress={() => editBtnHandler(item.id, item.name)}>
+              <Text style={styles.indiSubName}>{item.name}</Text>
+              <TouchableOpacity
+                style={styles.deleteBtn}
+                activeOpacity={0.4}
+                onPress={() => removeSubjectHandler(item.id)}>
+                <Icon1 name="delete-outline" size={24} color="#181818" />
+              </TouchableOpacity>
+            </TouchableOpacity>
+          )}
+        />
       )}
-    </AppOpenAdProvider>
+      <View style={styles.addSubjectArea}>
+        <TextInput
+          ref={textInputRef}
+          style={styles.input}
+          value={input}
+          placeholder="Enter Subject Here"
+          placeholderTextColor="#5A5A5A"
+          onChangeText={text => setInput(text)}
+          onSubmitEditing={addSubjectHandler}
+        />
+        {editId ? (
+          <TouchableOpacity
+            style={styles.addSubjectBtn}
+            activeOpacity={0.4}
+            onPress={saveEdithandler}>
+            <Icon1 name="done" size={24} color="#fff" />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={styles.addSubjectBtn}
+            activeOpacity={0.4}
+            onPress={addSubjectHandler}>
+            <Icon name="plus" size={24} color="#f5f5f5" />
+          </TouchableOpacity>
+        )}
+      </View>
+    </View>
   );
 };
 

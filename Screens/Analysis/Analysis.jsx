@@ -3,8 +3,12 @@ import React from 'react';
 import {useLayoutEffect} from 'react';
 import Dashboard from '../../Components/Dashboard';
 import {useSelector} from 'react-redux';
+import {ANALYSIS_BANNER} from '../../adsdata';
+import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
 
 const Analysis = ({navigation}) => {
+  const adUnitId = __DEV__ ? TestIds.BANNER : ANALYSIS_BANNER;
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTintColor: 'black',
@@ -143,6 +147,15 @@ const Analysis = ({navigation}) => {
               </View>
             );
           })}
+        </View>
+        <View style={{marginVertical: 10}}>
+          <BannerAd
+            unitId={adUnitId}
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+            requestOptions={{
+              requestNonPersonalizedAdsOnly: true,
+            }}
+          />
         </View>
       </ScrollView>
     </View>

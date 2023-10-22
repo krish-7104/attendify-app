@@ -14,8 +14,11 @@ import {useDispatch, useSelector} from 'react-redux';
 import {setValueHandler} from '../../redux/actions';
 import ChangeDate from '../../Components/ChangeDate';
 import EditDiv from '../../Components/EditDiv';
+import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
+import {EDIT_ATTENDANCE_BANNER} from '../../adsdata';
 
 const EditAttend = ({navigation}) => {
+  const adUnitId = __DEV__ ? TestIds.BANNER : EDIT_ATTENDANCE_BANNER;
   const [date, setDate] = useState('');
   const attendance = useSelector(state => state);
   const dispatch = useDispatch();
@@ -147,12 +150,18 @@ const EditAttend = ({navigation}) => {
   const removeAttendanceHandler = (id, date) => {
     setShowPopup(true);
     setDeleteDate({id, date});
-    setPopUpData({
-      absent: attendance[0].absent.includes(date),
-      cancel: attendance[0].cancel.includes(date),
-      present: attendance[0].present.includes(date),
-    });
+    const subject = attendance.find(item => item.id === id);
+    if (subject) {
+      setPopUpData({
+        absent: subject.absent.includes(date),
+        cancel: subject.cancel.includes(date),
+        present: subject.present.includes(date),
+      });
+    } else {
+      setPopUpData({absent: false, cancel: false, present: false});
+    }
   };
+
   return (
     <View style={styles.container}>
       <ChangeDate
@@ -208,6 +217,13 @@ const EditAttend = ({navigation}) => {
           </View>
         </View>
       </Modal>
+      <BannerAd
+        unitId={adUnitId}
+        size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+        requestOptions={{
+          requestNonPersonalizedAdsOnly: true,
+        }}
+      />
     </View>
   );
 };
