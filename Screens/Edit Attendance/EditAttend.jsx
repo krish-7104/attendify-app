@@ -15,10 +15,10 @@ import {setValueHandler} from '../../redux/actions';
 import ChangeDate from '../../Components/ChangeDate';
 import EditDiv from '../../Components/EditDiv';
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
-import {EDIT_ATTENDANCE_BANNER} from '../../adsdata';
+import {EDITATTENDANCE_BANNER} from '../../adsdata';
 
 const EditAttend = ({navigation}) => {
-  const adUnitId = __DEV__ ? TestIds.BANNER : EDIT_ATTENDANCE_BANNER;
+  const adUnitId = __DEV__ ? TestIds.BANNER : EDITATTENDANCE_BANNER;
   const [date, setDate] = useState('');
   const attendance = useSelector(state => state);
   const dispatch = useDispatch();

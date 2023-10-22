@@ -21,7 +21,7 @@ import {
   AdEventType,
   TestIds,
 } from 'react-native-google-mobile-ads';
-import {STUDENT_INTERSTITIAL} from '../../adsdata';
+import {SUBJECT_INTERSITITAL} from '../../adsdata';
 const Subject = ({navigation}) => {
   const [input, setInput] = useState('');
   const attendance = useSelector(state => state);
@@ -29,24 +29,30 @@ const Subject = ({navigation}) => {
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState();
   const textInputRef = useRef(null);
+  const [showAd, setShowAd] = useState(false);
 
-  const adUnitId = __DEV__ ? TestIds.INTERSTITIAL : STUDENT_INTERSTITIAL;
+  const adUnitId = __DEV__ ? TestIds.INTERSTITIAL : SUBJECT_INTERSITITAL;
 
   const interstitial = InterstitialAd.createForAdRequest(adUnitId, {
     requestNonPersonalizedAdsOnly: true,
-    keywords: ['student', 'college', 'attendance', 'study', 'engineering'],
   });
 
   useEffect(() => {
     const unsubscribe = interstitial.addAdEventListener(
       AdEventType.LOADED,
       () => {
-        interstitial.show();
+        if (showAd) {
+          interstitial.show();
+          setShowAd(false);
+        }
       },
     );
+    interstitial.load();
 
-    return unsubscribe;
-  }, []);
+    return () => {
+      unsubscribe();
+    };
+  }, [showAd]);
 
   useEffect(() => {
     getAttendanceData();
@@ -101,7 +107,7 @@ const Subject = ({navigation}) => {
   };
 
   const addSubjectHandler = () => {
-    interstitial.load();
+    setShowAd(true);
     let id = Math.round(Math.random() * 10000);
     if (input.length !== 0) {
       dispatch(
