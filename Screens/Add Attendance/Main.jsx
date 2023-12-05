@@ -216,7 +216,7 @@ const Main = ({navigation}) => {
                           onPress={() =>
                             addAttendanceHandler('present', item.id)
                           }
-                          activeOpacity={0.4}
+                          activeOpacity={0.8}
                           style={{
                             backgroundColor: '#4ade80',
                             padding: 3,
@@ -229,7 +229,7 @@ const Main = ({navigation}) => {
                           onPress={() =>
                             addAttendanceHandler('absent', item.id)
                           }
-                          activeOpacity={0.4}
+                          activeOpacity={0.8}
                           style={{
                             backgroundColor: '#f87171',
                             padding: 3,
@@ -242,7 +242,7 @@ const Main = ({navigation}) => {
                           onPress={() =>
                             addAttendanceHandler('cancel', item.id)
                           }
-                          activeOpacity={0.4}
+                          activeOpacity={0.8}
                           style={{
                             backgroundColor: '#60a5fa',
                             padding: 3,
@@ -258,7 +258,10 @@ const Main = ({navigation}) => {
           )}
         </>
       )}
-      <TouchableOpacity style={styles.addArea} onPress={() => setOpen(!open)}>
+      <TouchableOpacity
+        style={styles.addArea}
+        onPress={() => setOpen(!open)}
+        activeOpacity={0.8}>
         {!open ? (
           <Text style={styles.addAttend}>Add Attendance</Text>
         ) : (

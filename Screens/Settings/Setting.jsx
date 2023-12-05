@@ -126,14 +126,14 @@ const Setting = ({navigation}) => {
       <TouchableOpacity
         style={styles.importBtn}
         onPress={importAttendanceData}
-        activeOpacity={0.5}>
+        activeOpacity={0.8}>
         <Text style={styles.importTxt}>Import Attendance</Text>
         <Icon name="upload" style={{marginRight: 6}} size={24} color="black" />
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.importBtn}
         onPress={exportAttendanceData}
-        activeOpacity={0.5}>
+        activeOpacity={0.8}>
         <Text style={styles.importTxt}>Export Attendance</Text>
         <Icon
           name="download"
@@ -145,7 +145,7 @@ const Setting = ({navigation}) => {
       <TouchableOpacity
         style={styles.deleteBtn}
         onPress={confirmAlert}
-        activeOpacity={0.5}>
+        activeOpacity={0.8}>
         <Text style={styles.deleteText}>Delete All Data</Text>
         <Icon
           name="delete-outline"

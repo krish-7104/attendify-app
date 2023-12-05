@@ -98,8 +98,8 @@ android {
         applicationId "com.krish.attendify"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 9
-        versionName "2.1.1"
+        versionCode 10
+        versionName "2.1"
     }
 
     splits {
@@ -118,7 +118,7 @@ android {
             keyPassword 'android'
         }
         release {
-        storeFile file('attendify.jks')
+        storeFile file('attendify.keystore')
         storePassword 'attendify'
         keyAlias 'attendify'
         keyPassword 'attendify'

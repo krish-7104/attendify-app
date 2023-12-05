@@ -187,7 +187,7 @@ const Subject = ({navigation}) => {
               <Text style={styles.indiSubName}>{item.name}</Text>
               <TouchableOpacity
                 style={styles.deleteBtn}
-                activeOpacity={0.4}
+                activeOpacity={0.8}
                 onPress={() => removeSubjectHandler(item.id)}>
                 <Icon1 name="delete-outline" size={24} color="#181818" />
               </TouchableOpacity>
@@ -208,14 +208,14 @@ const Subject = ({navigation}) => {
         {editId ? (
           <TouchableOpacity
             style={styles.addSubjectBtn}
-            activeOpacity={0.4}
+            activeOpacity={0.8}
             onPress={saveEdithandler}>
             <Icon1 name="done" size={24} color="#fff" />
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
             style={styles.addSubjectBtn}
-            activeOpacity={0.4}
+            activeOpacity={0.8}
             onPress={addSubjectHandler}>
             <Icon name="plus" size={24} color="#f5f5f5" />
           </TouchableOpacity>

@@ -65,3 +65,4 @@ yarn-error.log
 .env
 adsdata.js
 attendify.jks
+attendify.crt

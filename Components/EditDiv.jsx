@@ -26,7 +26,7 @@ const EditDiv = props => {
           </Text>
           <TouchableOpacity
             onPress={() => props.removeAttendanceHandler(props.id, props.date)}
-            activeOpacity={0.4}
+            activeOpacity={0.8}
             style={{
               padding: 3,
               borderRadius: 4,
