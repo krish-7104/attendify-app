@@ -38,59 +38,67 @@ const EditDiv = props => {
         <View
           style={{
             display: 'flex',
-            justifyContent: 'center',
+            justifyContent: 'flex-start',
             alignItems: 'center',
             flexDirection: 'row',
-            marginTop: 6,
+            width: '60%',
+            overflow: 'hidden',
+            marginTop: -2,
           }}>
-          {props.present &&
-            props.present.map((indi, index) => {
-              if (indi === props.date) {
-                return (
-                  <View
-                    key={index}
-                    style={{
-                      backgroundColor: '#4ade80',
-                      paddingHorizontal: 8,
-                      paddingVertical: 8,
-                      borderRadius: 30,
-                      marginRight: 6,
-                    }}></View>
-                );
-              }
-            })}
-          {props.absent &&
-            props.absent.map((indi, index) => {
-              if (indi === props.date) {
-                return (
-                  <View
-                    key={index}
-                    style={{
-                      backgroundColor: '#f87171',
-                      paddingHorizontal: 8,
-                      paddingVertical: 8,
-                      borderRadius: 30,
-                      marginRight: 6,
-                    }}></View>
-                );
-              }
-            })}
-          {props.cancel &&
-            props.cancel.map((indi, index) => {
-              if (indi === props.date) {
-                return (
-                  <View
-                    key={index}
-                    style={{
-                      backgroundColor: '#60a5fa',
-                      paddingHorizontal: 8,
-                      paddingVertical: 8,
-                      borderRadius: 30,
-                      marginRight: 6,
-                    }}></View>
-                );
-              }
-            })}
+          <View
+            style={{
+              marginRight: 10,
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <View
+              style={{
+                backgroundColor: '#4ade80',
+                paddingHorizontal: 8,
+                paddingVertical: 8,
+                borderRadius: 30,
+                fontSize: 14,
+                marginRight: 4,
+              }}></View>
+            <Text>{props.present.length}</Text>
+          </View>
+          <View
+            style={{
+              marginRight: 10,
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <View
+              style={{
+                backgroundColor: '#f87171',
+                paddingHorizontal: 8,
+                paddingVertical: 8,
+                borderRadius: 30,
+                fontSize: 14,
+                marginRight: 4,
+              }}></View>
+            <Text>{props.absent.length}</Text>
+          </View>
+          <View
+            style={{
+              marginRight: 10,
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <View
+              style={{
+                backgroundColor: '#60a5fa',
+                paddingHorizontal: 8,
+                paddingVertical: 8,
+                borderRadius: 30,
+                fontSize: 14,
+                marginRight: 4,
+              }}></View>
+            <Text>{props.cancel.length}</Text>
+          </View>
         </View>
       </View>
     );

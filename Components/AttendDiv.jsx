@@ -1,6 +1,5 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import Icon from 'react-native-vector-icons/Feather';
 const AttendDiv = props => {
   if (
     props.present.includes(props.date) ||
@@ -10,11 +9,7 @@ const AttendDiv = props => {
     return (
       <View style={styles.div}>
         <View style={styles.textArea}>
-          <Text style={styles.subName}>
-            <Icon name="book" size={20} color="#181818" />
-            &nbsp;
-            {props.subject}
-          </Text>
+          <Text style={styles.subName}>{props.subject}</Text>
         </View>
         <View style={styles.attendShow}>
           <Text style={styles.subData}>
@@ -38,57 +33,60 @@ const AttendDiv = props => {
               overflow: 'hidden',
               marginTop: -2,
             }}>
-            {props.present &&
-              props.present.map((indi, index) => {
-                if (indi === props.date) {
-                  return (
-                    <View
-                      key={index}
-                      style={{
-                        backgroundColor: '#4ade80',
-                        paddingHorizontal: 8,
-                        paddingVertical: 8,
-                        borderRadius: 30,
-                        fontSize: 14,
-                        marginRight: 6,
-                      }}></View>
-                  );
-                }
-              })}
-            {props.absent &&
-              props.absent.map((indi, index) => {
-                if (indi === props.date) {
-                  return (
-                    <View
-                      key={index}
-                      style={{
-                        backgroundColor: '#f87171',
-                        paddingHorizontal: 8,
-                        paddingVertical: 8,
-                        borderRadius: 30,
-                        fontSize: 14,
-                        marginRight: 6,
-                      }}></View>
-                  );
-                }
-              })}
-            {props.cancel &&
-              props.cancel.map((indi, index) => {
-                if (indi === props.date) {
-                  return (
-                    <View
-                      key={index}
-                      style={{
-                        backgroundColor: '#60a5fa',
-                        paddingHorizontal: 8,
-                        paddingVertical: 8,
-                        borderRadius: 30,
-                        fontSize: 14,
-                        marginRight: 6,
-                      }}></View>
-                  );
-                }
-              })}
+            <View
+              style={{
+                marginRight: 10,
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <View
+                style={{
+                  backgroundColor: '#4ade80',
+                  paddingHorizontal: 8,
+                  paddingVertical: 8,
+                  borderRadius: 30,
+                  fontSize: 14,
+                  marginRight: 4,
+                }}></View>
+              <Text>{props.present.length}</Text>
+            </View>
+            <View
+              style={{
+                marginRight: 10,
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <View
+                style={{
+                  backgroundColor: '#f87171',
+                  paddingHorizontal: 8,
+                  paddingVertical: 8,
+                  borderRadius: 30,
+                  fontSize: 14,
+                  marginRight: 4,
+                }}></View>
+              <Text>{props.absent.length}</Text>
+            </View>
+            <View
+              style={{
+                marginRight: 10,
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <View
+                style={{
+                  backgroundColor: '#60a5fa',
+                  paddingHorizontal: 8,
+                  paddingVertical: 8,
+                  borderRadius: 30,
+                  fontSize: 14,
+                  marginRight: 4,
+                }}></View>
+              <Text>{props.cancel.length}</Text>
+            </View>
           </View>
         </View>
       </View>

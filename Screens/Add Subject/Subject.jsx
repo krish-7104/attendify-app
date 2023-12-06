@@ -151,6 +151,7 @@ const Subject = ({navigation}) => {
   };
 
   const editBtnHandler = (id, name) => {
+    console.log(id, name);
     setEditId(id);
     setInput(name);
     if (!textInputRef.current.isFocused()) {
