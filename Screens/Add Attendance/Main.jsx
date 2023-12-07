@@ -2,7 +2,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -18,6 +17,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 const Main = ({navigation}) => {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState('');
+  const [sortedAttendance, setSortedAttendance] = useState([]);
   const dispatch = useDispatch();
   const attendance = useSelector(state => state);
   useLayoutEffect(() => {
@@ -40,6 +40,15 @@ const Main = ({navigation}) => {
       },
     });
   }, [navigation]);
+
+  useEffect(() => {
+    if (attendance && attendance.length > 0) {
+      const sortedData = [...attendance].sort((a, b) => {
+        return a.name.localeCompare(b.name);
+      });
+      setSortedAttendance(sortedData);
+    }
+  }, [attendance]);
 
   useEffect(() => {
     const date = new Date();
@@ -174,19 +183,22 @@ const Main = ({navigation}) => {
             style={styles.scrollView}
             contentContainerStyle={{alignItems: 'center'}}>
             {attendance &&
-              attendance.map(subject => {
-                return (
-                  <AttendDiv
-                    date={date.toString().slice(0, 15)}
-                    key={subject.id}
-                    id={subject.id}
-                    subject={subject.name}
-                    present={subject.present}
-                    absent={subject.absent}
-                    cancel={subject.cancel ? subject.cancel : []}
-                  />
-                );
-              })}
+              attendance
+                .slice()
+                .sort((a, b) => a.id - b.id)
+                .map(subject => {
+                  return (
+                    <AttendDiv
+                      date={date.toString().slice(0, 15)}
+                      key={subject.id}
+                      id={subject.id}
+                      subject={subject.name}
+                      present={subject.present}
+                      absent={subject.absent}
+                      cancel={subject.cancel ? subject.cancel : []}
+                    />
+                  );
+                })}
           </ScrollView>
         </>
       )}
@@ -205,55 +217,47 @@ const Main = ({navigation}) => {
             <ScrollView
               style={styles.scrollView}
               contentContainerStyle={{alignItems: 'center'}}>
-              {attendance &&
-                attendance
-                  .sort((a, b) => a.id > b.id)
-                  .map(item => {
-                    return (
-                      <View key={item.id} style={styles.indiSubArea}>
-                        <Text style={styles.indiSubName}>{item.name}</Text>
-                        <TouchableOpacity
-                          onPress={() =>
-                            addAttendanceHandler('present', item.id)
-                          }
-                          activeOpacity={0.8}
-                          style={{
-                            backgroundColor: '#4ade80',
-                            padding: 3,
-                            borderRadius: 4,
-                            marginRight: 10,
-                          }}>
-                          <Icon name="check" size={16} color="black" />
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          onPress={() =>
-                            addAttendanceHandler('absent', item.id)
-                          }
-                          activeOpacity={0.8}
-                          style={{
-                            backgroundColor: '#f87171',
-                            padding: 3,
-                            borderRadius: 4,
-                            marginRight: 10,
-                          }}>
-                          <Icon name="close" size={16} color="black" />
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          onPress={() =>
-                            addAttendanceHandler('cancel', item.id)
-                          }
-                          activeOpacity={0.8}
-                          style={{
-                            backgroundColor: '#60a5fa',
-                            padding: 3,
-                            borderRadius: 4,
-                            marginRight: 10,
-                          }}>
-                          <Icon name="minus" size={16} color="black" />
-                        </TouchableOpacity>
-                      </View>
-                    );
-                  })}
+              {sortedAttendance &&
+                sortedAttendance.sort().map(item => {
+                  return (
+                    <View key={item.id} style={styles.indiSubArea}>
+                      <Text style={styles.indiSubName}>{item.name}</Text>
+                      <TouchableOpacity
+                        onPress={() => addAttendanceHandler('present', item.id)}
+                        activeOpacity={0.8}
+                        style={{
+                          backgroundColor: '#4ade80',
+                          padding: 3,
+                          borderRadius: 4,
+                          marginRight: 10,
+                        }}>
+                        <Icon name="check" size={16} color="black" />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => addAttendanceHandler('absent', item.id)}
+                        activeOpacity={0.8}
+                        style={{
+                          backgroundColor: '#f87171',
+                          padding: 3,
+                          borderRadius: 4,
+                          marginRight: 10,
+                        }}>
+                        <Icon name="close" size={16} color="black" />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => addAttendanceHandler('cancel', item.id)}
+                        activeOpacity={0.8}
+                        style={{
+                          backgroundColor: '#60a5fa',
+                          padding: 3,
+                          borderRadius: 4,
+                          marginRight: 10,
+                        }}>
+                        <Icon name="minus" size={16} color="black" />
+                      </TouchableOpacity>
+                    </View>
+                  );
+                })}
             </ScrollView>
           )}
         </>

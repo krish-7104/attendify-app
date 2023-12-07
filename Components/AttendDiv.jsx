@@ -33,60 +33,72 @@ const AttendDiv = props => {
               overflow: 'hidden',
               marginTop: -2,
             }}>
-            <View
-              style={{
-                marginRight: 10,
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
+            {props.present.filter(date => date === props.date).length !== 0 && (
               <View
                 style={{
-                  backgroundColor: '#4ade80',
-                  paddingHorizontal: 8,
-                  paddingVertical: 8,
-                  borderRadius: 30,
-                  fontSize: 14,
-                  marginRight: 4,
-                }}></View>
-              <Text>{props.present.length}</Text>
-            </View>
-            <View
-              style={{
-                marginRight: 10,
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
+                  marginRight: 10,
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <View
+                  style={{
+                    backgroundColor: '#4ade80',
+                    paddingHorizontal: 8,
+                    paddingVertical: 8,
+                    borderRadius: 30,
+                    fontSize: 14,
+                    marginRight: 4,
+                  }}></View>
+                <Text style={{color: '#181818'}}>
+                  {props.present.filter(date => date === props.date).length}
+                </Text>
+              </View>
+            )}
+            {props.absent.filter(date => date === props.date).length !== 0 && (
               <View
                 style={{
-                  backgroundColor: '#f87171',
-                  paddingHorizontal: 8,
-                  paddingVertical: 8,
-                  borderRadius: 30,
-                  fontSize: 14,
-                  marginRight: 4,
-                }}></View>
-              <Text>{props.absent.length}</Text>
-            </View>
-            <View
-              style={{
-                marginRight: 10,
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
+                  marginRight: 10,
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <View
+                  style={{
+                    backgroundColor: '#f87171',
+                    paddingHorizontal: 8,
+                    paddingVertical: 8,
+                    borderRadius: 30,
+                    fontSize: 14,
+                    marginRight: 4,
+                  }}></View>
+                <Text style={{color: '#181818'}}>
+                  {props.absent.filter(date => date === props.date).length}
+                </Text>
+              </View>
+            )}
+            {props.cancel.filter(date => date === props.date).length !== 0 && (
               <View
                 style={{
-                  backgroundColor: '#60a5fa',
-                  paddingHorizontal: 8,
-                  paddingVertical: 8,
-                  borderRadius: 30,
-                  fontSize: 14,
-                  marginRight: 4,
-                }}></View>
-              <Text>{props.cancel.length}</Text>
-            </View>
+                  marginRight: 10,
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <View
+                  style={{
+                    backgroundColor: '#60a5fa',
+                    paddingHorizontal: 8,
+                    paddingVertical: 8,
+                    borderRadius: 30,
+                    fontSize: 14,
+                    marginRight: 4,
+                  }}></View>
+                <Text style={{color: '#181818'}}>
+                  {props.cancel.filter(date => date === props.date).length}
+                </Text>
+              </View>
+            )}
           </View>
         </View>
       </View>
