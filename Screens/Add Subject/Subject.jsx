@@ -21,7 +21,7 @@ import {
   AdEventType,
   TestIds,
 } from 'react-native-google-mobile-ads';
-import {SUBJECT_INTERSITITAL} from '../../adsdata';
+import {SUBJECT_INTERSITITAL} from '../../adsData';
 const Subject = ({navigation}) => {
   const [input, setInput] = useState('');
   const attendance = useSelector(state => state);

@@ -16,7 +16,7 @@ import HowToUse from './Screens/HowToUse/HowToUse';
 import {Linking} from 'react-native';
 import {View, Image, StyleSheet, Text} from 'react-native';
 import {LogLevel, OneSignal} from 'react-native-onesignal';
-import {ONESIGNAL} from './adsdata';
+import {ONESIGNAL} from './adsData';
 import {useEffect} from 'react';
 
 export default function App() {

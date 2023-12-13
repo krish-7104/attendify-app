@@ -1,9 +1,9 @@
 import {StyleSheet, Text, ScrollView, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {useLayoutEffect} from 'react';
 import Dashboard from '../../Components/Dashboard';
 import {useSelector} from 'react-redux';
-import {ANALYSIS_BANNER, ANALYSIS_INTERSITITAL} from '../../adsdata';
+import {ANALYSIS_BANNER, ANALYSIS_INTERSITITAL} from '../../adsData';
 import {
   BannerAd,
   BannerAdSize,

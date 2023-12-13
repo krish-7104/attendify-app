@@ -17,7 +17,7 @@ import {extname} from 'path';
 import RNFS from 'react-native-fs';
 import * as ScopedStorage from 'react-native-scoped-storage';
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
-import {SETTINGS_BANNER} from '../../adsdata';
+import {SETTINGS_BANNER} from '../../adsData';
 const Setting = ({navigation}) => {
   const adUnitId = __DEV__ ? TestIds.BANNER : SETTINGS_BANNER;
   const attendance = useSelector(state => state);
