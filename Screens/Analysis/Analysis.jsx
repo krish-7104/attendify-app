@@ -1,41 +1,10 @@
 import {StyleSheet, Text, ScrollView, View} from 'react-native';
-import React, {useEffect} from 'react';
+import React from 'react';
 import {useLayoutEffect} from 'react';
 import Dashboard from '../../Components/Dashboard';
 import {useSelector} from 'react-redux';
-import {ANALYSIS_BANNER, ANALYSIS_INTERSITITAL} from '../../adsData';
-import {
-  BannerAd,
-  BannerAdSize,
-  TestIds,
-  InterstitialAd,
-  AdEventType,
-} from 'react-native-google-mobile-ads';
 
 const Analysis = ({navigation}) => {
-  const adUnitId = __DEV__ ? TestIds.BANNER : ANALYSIS_BANNER;
-  const interstitialAdUnitId = __DEV__
-    ? TestIds.INTERSTITIAL
-    : ANALYSIS_INTERSITITAL;
-
-  const interstitial = InterstitialAd.createForAdRequest(interstitialAdUnitId, {
-    requestNonPersonalizedAdsOnly: true,
-  });
-
-  useEffect(() => {
-    const unsubscribe = interstitial.addAdEventListener(
-      AdEventType.LOADED,
-      () => {
-        interstitial.show();
-      },
-    );
-    interstitial.load();
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTintColor: 'black',
@@ -73,13 +42,13 @@ const Analysis = ({navigation}) => {
         </Text>
         <View
           style={{
-            backgroundColor: '#fff',
+            // backgroundColor: '#fff',
             width: '90%',
             borderRadius: 10,
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            elevation: 1,
+            // elevation: 1,
           }}>
           {data.map((subject, index) => {
             return (
@@ -175,15 +144,6 @@ const Analysis = ({navigation}) => {
             );
           })}
         </View>
-        <View style={{marginVertical: 10}}>
-          <BannerAd
-            unitId={adUnitId}
-            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-            requestOptions={{
-              requestNonPersonalizedAdsOnly: true,
-            }}
-          />
-        </View>
       </ScrollView>
     </View>
   );
@@ -196,8 +156,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
     width: '96%',
-    borderBottomColor: '#18181810',
-    borderBottomWidth: 2,
+    backgroundColor: '#fff',
+    marginBottom: 14,
+    borderRadius: 10,
   },
   title: {
     fontFamily: 'Poppins-Medium',

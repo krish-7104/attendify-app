@@ -2,7 +2,6 @@ import {
   Alert,
   FlatList,
   Keyboard,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -16,12 +15,7 @@ import Icon1 from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import {setValueHandler} from '../../redux/actions';
-import {
-  InterstitialAd,
-  AdEventType,
-  TestIds,
-} from 'react-native-google-mobile-ads';
-import {SUBJECT_INTERSITITAL} from '../../adsData';
+
 const Subject = ({navigation}) => {
   const [input, setInput] = useState('');
   const attendance = useSelector(state => state);
@@ -29,30 +23,6 @@ const Subject = ({navigation}) => {
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState();
   const textInputRef = useRef(null);
-  const [showAd, setShowAd] = useState(false);
-
-  const adUnitId = __DEV__ ? TestIds.INTERSTITIAL : SUBJECT_INTERSITITAL;
-
-  const interstitial = InterstitialAd.createForAdRequest(adUnitId, {
-    requestNonPersonalizedAdsOnly: true,
-  });
-
-  useEffect(() => {
-    const unsubscribe = interstitial.addAdEventListener(
-      AdEventType.LOADED,
-      () => {
-        if (showAd) {
-          interstitial.show();
-          setShowAd(false);
-        }
-      },
-    );
-    interstitial.load();
-
-    return () => {
-      unsubscribe();
-    };
-  }, [showAd]);
 
   useEffect(() => {
     getAttendanceData();
@@ -107,7 +77,6 @@ const Subject = ({navigation}) => {
   };
 
   const addSubjectHandler = () => {
-    setShowAd(true);
     let id = Math.round(Math.random() * 10000);
     if (input.length !== 0) {
       dispatch(
