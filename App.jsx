@@ -19,17 +19,6 @@ import {LogLevel, OneSignal} from 'react-native-onesignal';
 import {ONESIGNAL} from './onesignal';
 import {useEffect} from 'react';
 
-const MyTheme = {
-  colors: {
-    primary: '#2563eb',
-    background: 'rgb(242, 242, 242)',
-    card: 'rgb(255, 255, 255)',
-    text: 'rgb(28, 28, 30)',
-    border: 'rgb(199, 199, 204)',
-    notification: 'rgb(255, 69, 58)',
-  },
-};
-
 export default function App() {
   useEffect(() => {
     OneSignal.Debug.setLogLevel(LogLevel.Verbose);
@@ -71,7 +60,7 @@ export default function App() {
   }
   return (
     <Provider store={mystore}>
-      <NavigationContainer theme={MyTheme}>
+      <NavigationContainer>
         <Drawer.Navigator
           initialRouteName="Home"
           drawerContent={props => <CustomDrawerContent {...props} />}>
