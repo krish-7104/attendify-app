@@ -27,6 +27,17 @@ const Analysis = ({navigation}) => {
   }, [navigation]);
   const data = useSelector(state => state);
 
+  const getAttendanceSuggestion = (presentCount, totalCount) => {
+    const currentPercentage = (presentCount * 100) / totalCount;
+    if (currentPercentage < 75) {
+      const lecturesNeeded = Math.ceil(
+        (0.75 * totalCount - presentCount) / 0.25,
+      );
+      return `Attend ${lecturesNeeded} more lectures to reach 75% attendance.`;
+    }
+    return '';
+  };
+
   return (
     <View>
       <ScrollView contentContainerStyle={{alignItems: 'center'}}>
@@ -140,6 +151,19 @@ const Analysis = ({navigation}) => {
                     %
                   </Text>
                 </View>
+                {subject.present.length === 0 && subject.absent.length === 0
+                  ? 0
+                  : (
+                      (subject.present.length * 100) /
+                      (subject.present.length + subject.absent.length)
+                    ).toPrecision(4) < 75 && (
+                      <Text style={styles.attendanceSuggestion}>
+                        {getAttendanceSuggestion(
+                          subject.present.length,
+                          subject.present.length + subject.absent.length,
+                        )}
+                      </Text>
+                    )}
               </View>
             );
           })}
@@ -176,5 +200,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontFamily: 'Poppins-Medium',
     color: '#181818',
+  },
+  attendanceSuggestion: {
+    fontSize: 13,
+    fontFamily: 'Poppins-Medium',
+    color: '#181818',
+    marginTop: 6,
   },
 });
