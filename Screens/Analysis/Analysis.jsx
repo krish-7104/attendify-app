@@ -34,8 +34,11 @@ const Analysis = ({navigation}) => {
       );
       return `Attend ${lecturesNeeded} more lectures to reach 75% attendance.`;
     }
-    return '';
+    return ' ';
   };
+
+  console.log(data);
+
   return (
     <View>
       <ScrollView contentContainerStyle={{alignItems: 'center'}}>
@@ -148,20 +151,23 @@ const Analysis = ({navigation}) => {
                         ).toPrecision(4)}
                     %
                   </Text>
-                  {subject.present.length === 0 && subject.absent.length === 0
-                    ? 0
-                    : (
-                        (subject.present.length * 100) /
-                        (subject.present.length + subject.absent.length)
-                      ).toPrecision(4) < 75 && (
-                        <Text style={styles.attendanceSuggestion}>
-                          {getAttendanceSuggestion(
-                            subject.present.length,
-                            subject.present.length + subject.absent.length,
-                          )}
-                        </Text>
-                      )}
                 </View>
+                {subject.present.length === 0 && subject.absent.length === 0 ? (
+                  <Text style={styles.attendanceSuggestion}>
+                    {getAttendanceSuggestion(0, 0)}
+                  </Text>
+                ) : (
+                  (subject.present.length * 100) /
+                    (subject.present.length + subject.absent.length) <
+                    75 && (
+                    <Text style={styles.attendanceSuggestion}>
+                      {getAttendanceSuggestion(
+                        subject.present.length,
+                        subject.present.length + subject.absent.length,
+                      )}
+                    </Text>
+                  )
+                )}
               </View>
             );
           })}
