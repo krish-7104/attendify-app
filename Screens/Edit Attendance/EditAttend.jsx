@@ -31,14 +31,14 @@ const EditAttend = ({navigation}) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTintColor: 'black',
-      title: 'Edit Attendance',
+      title: 'Edit',
       headerTitle: () => {
         return (
           <Text
             style={{
               fontSize: 20,
               marginTop: 6,
-              marginLeft: -8,
+
               color: '#181818',
               fontFamily: 'Poppins-SemiBold',
             }}>

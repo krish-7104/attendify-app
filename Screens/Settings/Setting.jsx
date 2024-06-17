@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ToastAndroid,
   Alert,
+  Linking,
 } from 'react-native';
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
@@ -28,7 +29,7 @@ const Setting = ({navigation}) => {
             style={{
               fontSize: 20,
               marginTop: 6,
-              marginLeft: -8,
+
               color: '#181818',
               fontFamily: 'Poppins-SemiBold',
             }}>
@@ -150,6 +151,24 @@ const Setting = ({navigation}) => {
           size={24}
           color="white"
         />
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={{position: 'absolute', bottom: 10}}
+        activeOpacity={0.8}
+        onPress={() => Linking.openURL('https://krishjotaniya.netlify.app/')}>
+        <Text
+          style={{
+            color: 'black',
+            fontSize: 14,
+            fontWeight: '600',
+            fontFamily: 'Poppins-Medium',
+            textAlign: 'center',
+            width: '100%',
+            borderBottomColor: 'black',
+            borderBottomWidth: 2,
+          }}>
+          Developed by Krish Jotaniya
+        </Text>
       </TouchableOpacity>
     </View>
   );

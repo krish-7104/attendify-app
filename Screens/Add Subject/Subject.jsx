@@ -43,7 +43,6 @@ const Subject = ({navigation}) => {
           style={{
             fontSize: 20,
             marginTop: 6,
-            marginLeft: -8,
             color: '#181818',
             fontFamily: 'Poppins-SemiBold',
           }}>

@@ -23,14 +23,14 @@ const Main = ({navigation}) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTintColor: 'black',
-      title: 'Attendify',
+      title: 'Home',
       headerTitle: () => {
         return (
           <Text
             style={{
               fontSize: 20,
               marginTop: 6,
-              marginLeft: -8,
+
               color: '#181818',
               fontFamily: 'Poppins-SemiBold',
             }}>
@@ -166,7 +166,7 @@ const Main = ({navigation}) => {
   };
 
   const openAddSubjectPage = () => {
-    navigation.navigate('Subject');
+    navigation.navigate('Subjects');
     setOpen(!open);
   };
 
