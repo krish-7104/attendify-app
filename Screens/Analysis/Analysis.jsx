@@ -37,8 +37,6 @@ const Analysis = ({navigation}) => {
     return ' ';
   };
 
-  console.log(data);
-
   return (
     <View>
       <ScrollView contentContainerStyle={{alignItems: 'center'}}>
