@@ -1,4 +1,9 @@
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {
+  createDrawerNavigator,
+  DrawerContentScrollView,
+  DrawerItem,
+  DrawerItemList,
+} from '@react-navigation/drawer';
 import {NavigationContainer} from '@react-navigation/native';
 import {Provider} from 'react-redux';
 import {mystore} from './redux/store';
@@ -8,11 +13,11 @@ import EditAttend from './Screens/Edit Attendance/EditAttend';
 import Setting from './Screens/Settings/Setting';
 import Analysis from './Screens/Analysis/Analysis';
 import HowToUse from './Screens/HowToUse/HowToUse';
-import {StyleSheet} from 'react-native';
+import {Linking} from 'react-native';
+import {View, Image, StyleSheet, Text} from 'react-native';
 import {LogLevel, OneSignal} from 'react-native-onesignal';
 import {ONESIGNAL} from './onesignal';
 import {useEffect} from 'react';
-import Icon from 'react-native-vector-icons/Ionicons';
 
 export default function App() {
   useEffect(() => {
@@ -20,61 +25,51 @@ export default function App() {
     OneSignal.initialize(ONESIGNAL);
     OneSignal.Notifications.requestPermission(true);
   }, []);
-
-  const MyTheme = {
-    colors: {
-      primary: '#2563eb',
-      background: 'rgb(242, 242, 242)',
-      card: 'rgb(255, 255, 255)',
-      text: 'rgb(28, 28, 30)',
-      border: 'rgb(199, 199, 204)',
-    },
-  };
-
-  const Tab = createBottomTabNavigator();
-
+  const Drawer = createDrawerNavigator();
+  function CustomDrawerContent(props) {
+    return (
+      <DrawerContentScrollView
+        {...props}
+        contentContainerStyle={{paddingTop: 50, flex: 1}}>
+        <View style={styles.headerContainer}>
+          <Image source={require('./assets/logo.png')} style={styles.icon} />
+          <Text style={styles.title}>Attendify</Text>
+        </View>
+        <DrawerItemList {...props} />
+        <View
+          style={{
+            width: '100%',
+            position: 'absolute',
+            bottom: 20,
+          }}>
+          <DrawerItem
+            label="About Developer"
+            onPress={() => Linking.openURL('https://krishjotaniya.netlify.app')}
+          />
+          <DrawerItem
+            label="Feedback"
+            onPress={() =>
+              Linking.openURL(
+                'https://krishjotaniya.netlify.app/contact?ref=Attendify',
+              )
+            }
+          />
+        </View>
+      </DrawerContentScrollView>
+    );
+  }
   return (
     <Provider store={mystore}>
-      <NavigationContainer theme={MyTheme}>
-        <Tab.Navigator
+      <NavigationContainer>
+        <Drawer.Navigator
           initialRouteName="Home"
-          screenOptions={({route}) => ({
-            tabBarIcon: ({focused, color, size}) => {
-              let iconName;
-
-              if (route.name === 'Home') {
-                iconName = 'home-outline';
-              } else if (route.name === 'Subjects') {
-                iconName = 'book-outline';
-              } else if (route.name === 'Analysis') {
-                iconName = 'analytics-outline';
-              } else if (route.name === 'Edit') {
-                iconName = 'create-outline';
-              } else if (route.name === 'Settings') {
-                iconName = 'settings-outline';
-              }
-
-              return <Icon name={iconName} size={22} color={color} />;
-            },
-            tabBarActiveTintColor: '#2563eb',
-            tabBarInactiveTintColor: '#18181870',
-            gestureEnabled: true,
-            swipeEnabled: true,
-            tabBarStyle: {
-              height: 60,
-              padding: 10,
-              paddingBottom: 4,
-            },
-            tabBarLabelStyle: {
-              fontFamily: 'Poppins-Medium',
-            },
-          })}>
-          <Tab.Screen name="Home" component={Main} />
-          <Tab.Screen name="Subjects" component={Subject} />
-          <Tab.Screen name="Analysis" component={Analysis} />
-          <Tab.Screen name="Edit" component={EditAttend} />
-          <Tab.Screen name="Settings" component={Setting} />
-        </Tab.Navigator>
+          drawerContent={props => <CustomDrawerContent {...props} />}>
+          <Drawer.Screen name="Home" component={Main} />
+          <Drawer.Screen name="Subject" component={Subject} />
+          <Drawer.Screen name="Analysis" component={Analysis} />
+          <Drawer.Screen name="Edit Attendance" component={EditAttend} />
+          <Drawer.Screen name="Settings" component={Setting} />
+        </Drawer.Navigator>
       </NavigationContainer>
     </Provider>
   );

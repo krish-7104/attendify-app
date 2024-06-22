@@ -39,15 +39,17 @@ const Subject = ({navigation}) => {
       headerTintColor: 'black',
       title: 'Subjects',
       headerTitle: () => (
-        <Text
-          style={{
-            fontSize: 20,
-            marginTop: 6,
-            color: '#181818',
-            fontFamily: 'Poppins-SemiBold',
-          }}>
-          Subjects
-        </Text>
+        <View>
+          <Text
+            style={{
+              fontSize: 20,
+              marginTop: 6,
+              color: '#181818',
+              fontFamily: 'Poppins-SemiBold',
+            }}>
+            Subjects
+          </Text>
+        </View>
       ),
     });
   }, [navigation]);
@@ -130,21 +132,44 @@ const Subject = ({navigation}) => {
   };
 
   const editBtnHandler = (id, name) => {
-    setEditId(id);
-    setInput(name);
-    if (!textInputRef.current.isFocused()) {
-      textInputRef.current.focus();
-    }
     setModalVisible(true);
+    setEditId(id);
+    setInput(name.replace(' Lab', ''));
+    setType(name.includes(' Lab') ? 'Lab' : 'Lecture');
+    if (!textInputRef?.current?.isFocused()) {
+      textInputRef.current?.focus();
+    }
   };
 
   const saveEdithandler = () => {
-    let subInd = attendance.findIndex(subject => subject.id === editId);
-    const updatedAttendance = [...attendance];
-    updatedAttendance[subInd].name = input;
+    if (input.length === 0) {
+      ToastAndroid.show('Subject Name cannot be empty!', ToastAndroid.SHORT);
+      return;
+    }
+
+    const updatedAttendance = attendance.map(subject => {
+      if (subject.id === editId) {
+        let updatedSubject;
+        if (type === 'Lecture' || type === 'Both') {
+          updatedSubject = {
+            ...subject,
+            name: input,
+          };
+        }
+        if (type === 'Lab' || type === 'Both') {
+          updatedSubject = {
+            ...subject,
+            name: `${input} Lab`,
+          };
+        }
+        return updatedSubject;
+      } else {
+        return subject;
+      }
+    });
 
     dispatch(setValueHandler(updatedAttendance));
-    setEditId();
+    setEditId(null);
     setInput('');
     setModalVisible(false);
     Keyboard.dismiss();
@@ -164,6 +189,7 @@ const Subject = ({navigation}) => {
           keyExtractor={item => item.id.toString()}
           renderItem={({item}) => (
             <TouchableOpacity
+              activeOpacity={0.8}
               style={styles.indiSubArea}
               onPress={() => editBtnHandler(item.id, item.name)}>
               <Text style={styles.indiSubName}>{item.name}</Text>
@@ -183,6 +209,14 @@ const Subject = ({navigation}) => {
           activeOpacity={0.8}
           onPress={() => setModalVisible(true)}>
           <Icon name="plus" size={20} color="#f5f5f5" />
+          <Text
+            style={{
+              fontFamily: 'Poppins-Medium',
+              marginLeft: 10,
+              color: '#fff',
+            }}>
+            Add Subject
+          </Text>
         </TouchableOpacity>
       )}
       <Modal
@@ -257,20 +291,22 @@ const Subject = ({navigation}) => {
                   Lab
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.typeButton,
-                  type === 'Both' && styles.selectedTypeButton,
-                ]}
-                onPress={() => setType('Both')}>
-                <Text
+              {!editId && (
+                <TouchableOpacity
                   style={[
-                    styles.typeButtonText,
-                    type === 'Both' && styles.selectedTypeButtonText,
-                  ]}>
-                  Both
-                </Text>
-              </TouchableOpacity>
+                    styles.typeButton,
+                    type === 'Both' && styles.selectedTypeButton,
+                  ]}
+                  onPress={() => setType('Both')}>
+                  <Text
+                    style={[
+                      styles.typeButtonText,
+                      type === 'Both' && styles.selectedTypeButtonText,
+                    ]}>
+                    Both
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
             <View
               style={{
@@ -349,10 +385,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
     padding: 14,
     borderRadius: 100,
-    position: 'absolute',
-    bottom: 30,
-    right: 30,
-    zIndex: 20,
+    marginVertical: 10,
+    justifyContent: 'center',
+    alignContent: 'center',
+    flexDirection: 'row',
   },
   input: {
     width: '100%',
