@@ -3,6 +3,8 @@ import React from 'react';
 import {useLayoutEffect} from 'react';
 import Dashboard from '../../Components/Dashboard';
 import {useSelector} from 'react-redux';
+import Icon from 'react-native-vector-icons/AntDesign';
+import {TouchableOpacity} from 'react-native';
 
 const Analysis = ({navigation}) => {
   useLayoutEffect(() => {
@@ -26,6 +28,7 @@ const Analysis = ({navigation}) => {
     });
   }, [navigation]);
   const data = useSelector(state => state);
+
   const getAttendanceSuggestion = (presentCount, totalCount) => {
     const currentPercentage = (presentCount * 100) / totalCount;
     if (currentPercentage < 75) {
@@ -34,13 +37,15 @@ const Analysis = ({navigation}) => {
       );
       return `Attend ${lecturesNeeded} more lectures to reach 75% attendance.`;
     }
-    return ' ';
+    const lectureSkip = Math.max(0, presentCount - 0.75 * totalCount);
+    return `You can skip ${lectureSkip} lectures`;
   };
 
   return (
     <View>
       <ScrollView contentContainerStyle={{alignItems: 'center'}}>
         <Dashboard />
+
         <Text
           style={{
             marginVertical: 14,
@@ -62,7 +67,15 @@ const Analysis = ({navigation}) => {
           }}>
           {data.map((subject, index) => {
             return (
-              <View style={styles.card} key={subject.id}>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('AnalysisDetails', {
+                    subject: subject.id,
+                  })
+                }
+                activeOptacity={0.9}
+                style={styles.card}
+                key={subject.id}>
                 <Text style={styles.title}>{subject.name}</Text>
                 <View
                   style={{
@@ -140,15 +153,29 @@ const Analysis = ({navigation}) => {
                       </Text>
                     </View>
                   </View>
-                  <Text style={styles.totalPercentage}>
-                    {subject.present.length === 0 && subject.absent.length === 0
-                      ? 0
-                      : (
-                          (subject.present.length * 100) /
-                          (subject.present.length + subject.absent.length)
-                        ).toPrecision(4)}
-                    %
-                  </Text>
+                  <View
+                    style={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                    }}>
+                    <Text style={styles.totalPercentage}>
+                      {subject.present.length === 0 &&
+                      subject.absent.length === 0
+                        ? 0
+                        : (
+                            (subject.present.length * 100) /
+                            (subject.present.length + subject.absent.length)
+                          ).toPrecision(4)}
+                      %
+                    </Text>
+                    <Icon
+                      name="right"
+                      size={20}
+                      color="blue"
+                      style={{marginLeft: 10}}
+                    />
+                  </View>
                 </View>
                 {subject.present.length === 0 && subject.absent.length === 0 ? (
                   <Text style={styles.attendanceSuggestion}>
@@ -166,7 +193,7 @@ const Analysis = ({navigation}) => {
                     </Text>
                   )
                 )}
-              </View>
+              </TouchableOpacity>
             );
           })}
         </View>

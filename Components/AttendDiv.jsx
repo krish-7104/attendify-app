@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import React from 'react';
 const AttendDiv = props => {
   if (
@@ -7,7 +7,14 @@ const AttendDiv = props => {
     props.cancel.includes(props.date)
   ) {
     return (
-      <View style={styles.div}>
+      <TouchableOpacity
+        onPress={() =>
+          props.navigation.navigate('AnalysisDetails', {
+            subject: props.id,
+          })
+        }
+        activeOptacity={0.9}
+        style={styles.div}>
         <View style={styles.textArea}>
           <Text style={styles.subName}>{props.subject}</Text>
         </View>
@@ -101,7 +108,7 @@ const AttendDiv = props => {
             )}
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   }
 };

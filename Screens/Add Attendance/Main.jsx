@@ -189,6 +189,7 @@ const Main = ({navigation}) => {
                 .map(subject => {
                   return (
                     <AttendDiv
+                      navigation={navigation}
                       date={date.toString().slice(0, 15)}
                       key={subject.id}
                       id={subject.id}

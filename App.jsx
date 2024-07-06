@@ -4,6 +4,7 @@ import {
   DrawerItem,
   DrawerItemList,
 } from '@react-navigation/drawer';
+import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 import {Provider} from 'react-redux';
 import {mystore} from './redux/store';
@@ -12,7 +13,7 @@ import Subject from './Screens/Add Subject/Subject';
 import EditAttend from './Screens/Edit Attendance/EditAttend';
 import Setting from './Screens/Settings/Setting';
 import Analysis from './Screens/Analysis/Analysis';
-import HowToUse from './Screens/HowToUse/HowToUse';
+import AnalysisDetails from './Screens/Analysis/MoreDetails';
 import {Linking} from 'react-native';
 import {View, Image, StyleSheet, Text} from 'react-native';
 import {LogLevel, OneSignal} from 'react-native-onesignal';
@@ -25,7 +26,10 @@ export default function App() {
     OneSignal.initialize(ONESIGNAL);
     OneSignal.Notifications.requestPermission(true);
   }, []);
+
   const Drawer = createDrawerNavigator();
+  const Stack = createStackNavigator();
+
   function CustomDrawerContent(props) {
     return (
       <DrawerContentScrollView
@@ -58,6 +62,25 @@ export default function App() {
       </DrawerContentScrollView>
     );
   }
+
+  function AnalysisStack() {
+    return (
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Analysis"
+          component={Analysis}
+          options={{headerShown: false, title: 'Analysis'}}
+        />
+        <Stack.Screen
+          name="AnalysisDetails"
+          component={AnalysisDetails}
+          options={{
+            headerShown: false,
+          }}
+        />
+      </Stack.Navigator>
+    );
+  }
   return (
     <Provider store={mystore}>
       <NavigationContainer>
@@ -66,7 +89,7 @@ export default function App() {
           drawerContent={props => <CustomDrawerContent {...props} />}>
           <Drawer.Screen name="Home" component={Main} />
           <Drawer.Screen name="Subject" component={Subject} />
-          <Drawer.Screen name="Analysis" component={Analysis} />
+          <Drawer.Screen name="Analysis" component={AnalysisStack} />
           <Drawer.Screen name="Edit Attendance" component={EditAttend} />
           <Drawer.Screen name="Settings" component={Setting} />
         </Drawer.Navigator>
