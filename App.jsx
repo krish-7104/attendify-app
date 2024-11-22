@@ -12,11 +12,9 @@ import Subject from './Screens/Add Subject/Subject';
 import EditAttend from './Screens/Edit Attendance/EditAttend';
 import Setting from './Screens/Settings/Setting';
 import Analysis from './Screens/Analysis/Analysis';
-import HowToUse from './Screens/HowToUse/HowToUse';
 import {Linking} from 'react-native';
 import {View, Image, StyleSheet, Text} from 'react-native';
 import {LogLevel, OneSignal} from 'react-native-onesignal';
-import {ONESIGNAL} from './onesignal';
 import {useEffect} from 'react';
 
 export default function App() {
@@ -50,7 +48,7 @@ export default function App() {
             label="Feedback"
             onPress={() =>
               Linking.openURL(
-                'https://krishjotaniya.netlify.app/contact?ref=Attendify',
+                'https://krishjotaniya.netlify.app/contact?ref=Attendify-App-Feedback',
               )
             }
           />

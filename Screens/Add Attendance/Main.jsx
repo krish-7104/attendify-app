@@ -166,7 +166,7 @@ const Main = ({navigation}) => {
   };
 
   const openAddSubjectPage = () => {
-    navigation.navigate('Subjects');
+    navigation.navigate('Subject');
     setOpen(!open);
   };
 
