@@ -37,6 +37,16 @@ const Analysis = ({navigation}) => {
     return ' ';
   };
 
+  const getBorderColor = subject => {
+    const totalClasses = subject.present.length + subject.absent.length;
+    const attendancePercentage =
+      totalClasses > 0 ? (subject.present.length * 100) / totalClasses : 0;
+
+    if (attendancePercentage >= 75) return '#4ade80';
+    if (attendancePercentage >= 50) return '#facc15';
+    return '#f87171';
+  };
+
   return (
     <View>
       <ScrollView contentContainerStyle={{alignItems: 'center'}}>
@@ -52,17 +62,22 @@ const Analysis = ({navigation}) => {
         </Text>
         <View
           style={{
-            // backgroundColor: '#fff',
             width: '90%',
             borderRadius: 10,
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            // elevation: 1,
           }}>
           {data.map((subject, index) => {
             return (
-              <View style={styles.card} key={subject.id}>
+              <View
+                style={[
+                  styles.card,
+                  {
+                    borderLeftColor: getBorderColor(subject),
+                  },
+                ]}
+                key={subject.id}>
                 <Text style={styles.title}>{subject.name}</Text>
                 <View
                   style={{
@@ -179,34 +194,36 @@ export default Analysis;
 
 const styles = StyleSheet.create({
   card: {
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     width: '96%',
     backgroundColor: '#fff',
-    marginBottom: 14,
-    borderRadius: 10,
+    marginBottom: 12,
+    borderRadius: 8,
+    borderLeftWidth: 5,
   },
   title: {
     fontFamily: 'Poppins-Medium',
     color: '#181818',
-    fontSize: 16,
-    marginBottom: 4,
+    fontSize: 14,
+    marginBottom: 6,
   },
   subTitle: {
     fontFamily: 'Poppins-Regular',
     color: '#181818',
-    fontSize: 13,
+    fontSize: 12,
     color: '#18181890',
+    marginBottom: 4,
   },
   totalPercentage: {
-    fontSize: 24,
+    fontSize: 20,
     fontFamily: 'Poppins-Medium',
     color: '#181818',
   },
   attendanceSuggestion: {
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: 'Poppins-Medium',
-    color: '#181818',
+    color: '#f87171',
     marginTop: 6,
   },
 });
