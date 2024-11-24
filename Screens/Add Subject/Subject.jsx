@@ -2,13 +2,13 @@ import {
   Alert,
   FlatList,
   Keyboard,
-  Modal,
   StyleSheet,
   Text,
   TextInput,
   ToastAndroid,
   TouchableOpacity,
   View,
+  Animated,
 } from 'react-native';
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -22,9 +22,10 @@ const Subject = ({navigation}) => {
   const [type, setType] = useState('Lecture');
   const attendance = useSelector(state => state);
   const dispatch = useDispatch();
-  const [modalVisible, setModalVisible] = useState(false);
-  const [editId, setEditId] = useState();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editId, setEditId] = useState(null);
   const textInputRef = useRef(null);
+  const snackbarHeight = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     getAttendanceData();
@@ -34,26 +35,38 @@ const Subject = ({navigation}) => {
     storeData();
   }, [attendance]);
 
+  const showSnackbar = () => {
+    Animated.spring(snackbarHeight, {
+      toValue: 340,
+      useNativeDriver: false,
+      damping: 20,
+      stiffness: 90,
+    }).start();
+  };
+
+  const hideSnackbar = () => {
+    Animated.spring(snackbarHeight, {
+      toValue: 0,
+      useNativeDriver: false,
+      damping: 20,
+      stiffness: 90,
+    }).start(() => {
+      setInput('');
+      setType('Lecture');
+      setIsEditing(false);
+      setEditId(null);
+    });
+  };
+
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTintColor: 'black',
+      headerTintColor: '#333',
       title: 'Subjects',
-      headerTitle: () => (
-        <View>
-          <Text
-            style={{
-              fontSize: 20,
-              marginTop: 6,
-              color: '#181818',
-              fontFamily: 'Poppins-SemiBold',
-            }}>
-            Subjects
-          </Text>
-        </View>
-      ),
+      headerTitle: () => <Text style={styles.headerTitle}>My Subjects</Text>,
     });
   }, [navigation]);
 
+  // Core data functions remain the same
   const getAttendanceData = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem('attendance');
@@ -80,402 +93,365 @@ const Subject = ({navigation}) => {
   };
 
   const addSubjectHandler = () => {
-    let id = Math.round(Math.random() * 10000);
-    if (input.length !== 0) {
-      const newSubjects = [];
-      if (type === 'Lecture' || type === 'Both') {
-        newSubjects.push({
-          id: id,
-          name: input,
-          present: [],
-          absent: [],
-          cancel: [],
-        });
-      }
-      if (type === 'Lab' || type === 'Both') {
-        newSubjects.push({
-          id: id + 1,
-          name: `${input} Lab`,
-          present: [],
-          absent: [],
-          cancel: [],
-        });
-      }
-      dispatch(setValueHandler([...attendance, ...newSubjects]));
-      setInput('');
-      setType('Lecture');
-      setModalVisible(false);
-      Keyboard.dismiss();
+    if (input.trim().length === 0) {
+      ToastAndroid.show('Please enter a subject name', ToastAndroid.SHORT);
+      return;
     }
+
+    let id = Math.round(Math.random() * 10000);
+    const newSubjects = [];
+    if (type === 'Lecture' || type === 'Both') {
+      newSubjects.push({
+        id: id,
+        name: input.trim(),
+        present: [],
+        absent: [],
+        cancel: [],
+      });
+    }
+    if (type === 'Lab' || type === 'Both') {
+      newSubjects.push({
+        id: id + 1,
+        name: `${input.trim()} Lab`,
+        present: [],
+        absent: [],
+        cancel: [],
+      });
+    }
+    dispatch(setValueHandler([...attendance, ...newSubjects]));
+    hideSnackbar();
+    ToastAndroid.show('Subject added successfully!', ToastAndroid.SHORT);
   };
 
   const removeSubjectHandler = id => {
     Alert.alert(
-      'Are You Sure?',
-      'Deleting subject will delete that subject attendance also.',
+      'Delete Subject',
+      'Are you sure you want to delete this subject?',
       [
+        {text: 'Cancel', style: 'cancel'},
         {
-          text: 'No',
-          onPress: () => console.log('No Pressed'),
-          style: 'cancel',
-        },
-        {
-          text: 'Yes',
-          onPress: () =>
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
             dispatch(
               setValueHandler(attendance.filter(item => item.id !== id)),
-            ),
+            );
+            ToastAndroid.show('Subject deleted', ToastAndroid.SHORT);
+          },
         },
       ],
-      {cancelable: false},
     );
   };
 
   const editBtnHandler = (id, name) => {
-    setModalVisible(true);
+    setIsEditing(true);
     setEditId(id);
     setInput(name.replace(' Lab', ''));
     setType(name.includes(' Lab') ? 'Lab' : 'Lecture');
-    if (!textInputRef?.current?.isFocused()) {
-      textInputRef.current?.focus();
-    }
+    showSnackbar();
+    setTimeout(() => textInputRef.current?.focus(), 100);
   };
 
-  const saveEdithandler = () => {
-    if (input.length === 0) {
-      ToastAndroid.show('Subject Name cannot be empty!', ToastAndroid.SHORT);
+  const saveEditHandler = () => {
+    if (input.trim().length === 0) {
+      ToastAndroid.show('Subject name cannot be empty!', ToastAndroid.SHORT);
       return;
     }
 
     const updatedAttendance = attendance.map(subject => {
       if (subject.id === editId) {
-        let updatedSubject;
-        if (type === 'Lecture' || type === 'Both') {
-          updatedSubject = {
-            ...subject,
-            name: input,
-          };
-        }
-        if (type === 'Lab' || type === 'Both') {
-          updatedSubject = {
-            ...subject,
-            name: `${input} Lab`,
-          };
-        }
-        return updatedSubject;
-      } else {
-        return subject;
+        return {
+          ...subject,
+          name: type === 'Lab' ? `${input.trim()} Lab` : input.trim(),
+        };
       }
+      return subject;
     });
 
     dispatch(setValueHandler(updatedAttendance));
-    setEditId(null);
-    setInput('');
-    setModalVisible(false);
-    Keyboard.dismiss();
-    ToastAndroid.show('Subject Name Changed!', ToastAndroid.SHORT);
+    hideSnackbar();
+    ToastAndroid.show('Subject updated successfully!', ToastAndroid.SHORT);
   };
+
+  const renderSubjectItem = ({item}) => (
+    <TouchableOpacity
+      activeOpacity={0.7}
+      style={styles.subjectCard}
+      onPress={() => editBtnHandler(item.id, item.name)}>
+      <View style={styles.subjectInfo}>
+        <Text style={styles.subjectName}>{item.name}</Text>
+        <View
+          style={[
+            styles.typeBadge,
+            {
+              backgroundColor: item.name.includes('Lab')
+                ? '#f0f0f0'
+                : '#e8e8e8',
+            },
+          ]}>
+          <Text style={styles.typeBadgeText}>
+            {item.name.includes('Lab') ? 'Laboratory' : 'Theory'}
+          </Text>
+        </View>
+      </View>
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => removeSubjectHandler(item.id)}>
+        <Icon1 name="delete-outline" size={24} color="#666" />
+      </TouchableOpacity>
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
-      {attendance && attendance.length === 0 ? (
-        <View style={styles.noSubDiv}>
-          <Text style={styles.noSubText}>Add Subjects!</Text>
+      {attendance?.length === 0 ? (
+        <View style={styles.emptyState}>
+          <Icon name="book" size={48} color="#333" />
+          <Text style={styles.emptyStateTitle}>No Subjects Yet</Text>
+          <Text style={styles.emptyStateText}>
+            Tap the + button to add your first subject
+          </Text>
         </View>
       ) : (
         <FlatList
-          style={styles.subListView}
+          style={styles.subjectList}
           data={attendance}
           keyExtractor={item => item.id.toString()}
-          renderItem={({item}) => (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.indiSubArea}
-              onPress={() => editBtnHandler(item.id, item.name)}>
-              <Text style={styles.indiSubName}>{item.name}</Text>
-              <TouchableOpacity
-                style={styles.deleteBtn}
-                activeOpacity={0.8}
-                onPress={() => removeSubjectHandler(item.id)}>
-                <Icon1 name="delete-outline" size={24} color="#181818" />
-              </TouchableOpacity>
-            </TouchableOpacity>
-          )}
+          renderItem={renderSubjectItem}
+          showsVerticalScrollIndicator={false}
         />
       )}
-      {!modalVisible && (
-        <TouchableOpacity
-          style={styles.addSubjectBtn}
-          activeOpacity={0.8}
-          onPress={() => setModalVisible(true)}>
-          <Icon name="plus" size={20} color="#f5f5f5" />
-          <Text
-            style={{
-              fontFamily: 'Poppins-Medium',
-              marginLeft: 10,
-              color: '#fff',
-            }}>
-            Add Subject
-          </Text>
-        </TouchableOpacity>
-      )}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: '#00000050',
-          }}>
-          <TouchableOpacity
-            style={styles.addSubjectBtn}
-            activeOpacity={0.8}
-            onPress={() => setModalVisible(false)}>
-            <Icon1 name="clear" size={20} color="#f5f5f5" />
-          </TouchableOpacity>
-          <View style={styles.modalView}>
-            <Text
-              style={{
-                fontFamily: 'Poppins-Medium',
-                marginBottom: 2,
-                color: '#000',
-              }}>
-              Add Subject
+
+      <TouchableOpacity
+        style={styles.fab}
+        activeOpacity={0.8}
+        onPress={showSnackbar}>
+        <Icon name="plus" size={24} color="#fff" />
+      </TouchableOpacity>
+
+      <Animated.View style={[styles.snackbar, {height: snackbarHeight}]}>
+        <View style={styles.snackbarContent}>
+          <View style={styles.snackbarHeader}>
+            <Text style={styles.snackbarTitle}>
+              {isEditing ? 'Edit Subject' : 'Add New Subject'}
             </Text>
-            <TextInput
-              ref={textInputRef}
-              style={styles.input}
-              value={input}
-              placeholder="Enter Subject Here"
-              placeholderTextColor="#5A5A5A"
-              onChangeText={text => setInput(text)}
-            />
-            <Text
-              style={{
-                fontFamily: 'Poppins-Medium',
-                marginBottom: 3,
-                color: '#000',
-              }}>
-              Select Type
-            </Text>
-            <View style={styles.typeSelector}>
-              <TouchableOpacity
-                style={[
-                  styles.typeButton,
-                  type === 'Lecture' && styles.selectedTypeButton,
-                ]}
-                onPress={() => setType('Lecture')}>
-                <Text
-                  style={[
-                    styles.typeButtonText,
-                    type === 'Lecture' && styles.selectedTypeButtonText,
-                  ]}>
-                  Lecture
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.typeButton,
-                  type === 'Lab' && styles.selectedTypeButton,
-                ]}
-                onPress={() => setType('Lab')}>
-                <Text
-                  style={[
-                    styles.typeButtonText,
-                    type === 'Lab' && styles.selectedTypeButtonText,
-                  ]}>
-                  Lab
-                </Text>
-              </TouchableOpacity>
-              {!editId && (
+            <TouchableOpacity onPress={hideSnackbar} activeOpacity={0.7}>
+              <Icon name="close" size={24} color="#333" />
+            </TouchableOpacity>
+          </View>
+
+          <TextInput
+            ref={textInputRef}
+            style={styles.input}
+            value={input}
+            placeholder="Enter subject name"
+            placeholderTextColor="#999"
+            onChangeText={text => setInput(text)}
+            autoCapitalize="words"
+          />
+
+          <Text style={styles.sectionTitle}>Subject Type</Text>
+          <View style={styles.typeSelector}>
+            {['Lecture', 'Lab', !isEditing && 'Both']
+              .filter(Boolean)
+              .map(typeOption => (
                 <TouchableOpacity
+                  key={typeOption}
                   style={[
-                    styles.typeButton,
-                    type === 'Both' && styles.selectedTypeButton,
+                    styles.typeChip,
+                    type === typeOption && styles.selectedTypeChip,
                   ]}
-                  onPress={() => setType('Both')}>
+                  onPress={() => setType(typeOption)}>
                   <Text
                     style={[
-                      styles.typeButtonText,
-                      type === 'Both' && styles.selectedTypeButtonText,
+                      styles.typeChipText,
+                      type === typeOption && styles.selectedTypeChipText,
                     ]}>
-                    Both
+                    {typeOption === 'Lecture' ? 'Theory' : typeOption}
                   </Text>
                 </TouchableOpacity>
-              )}
-            </View>
-            <View
-              style={{
-                justifyContent: 'space-evenly',
-                alignItems: 'center',
-                flexDirection: 'row',
-              }}>
-              {editId ? (
-                <TouchableOpacity
-                  style={styles.saveButton}
-                  activeOpacity={0.8}
-                  onPress={saveEdithandler}>
-                  <Text style={{color: '#fff', fontFamily: 'Poppins-Medium'}}>
-                    Save
-                  </Text>
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity
-                  style={styles.saveButton}
-                  activeOpacity={0.8}
-                  onPress={addSubjectHandler}>
-                  <Text style={{color: '#fff', fontFamily: 'Poppins-Medium'}}>
-                    Add Subject
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
+              ))}
           </View>
+
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={isEditing ? saveEditHandler : addSubjectHandler}>
+            <Text style={styles.actionButtonText}>
+              {isEditing ? 'Save Changes' : 'Add Subject'}
+            </Text>
+          </TouchableOpacity>
         </View>
-      </Modal>
+      </Animated.View>
     </View>
   );
 };
 
-export default Subject;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fafafa',
+  },
+  headerTitle: {
+    fontSize: 20,
+    color: '#333',
+    fontFamily: 'Poppins-SemiBold',
+  },
+  subjectList: {
+    flex: 1,
+    padding: 16,
+  },
+  subjectCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+    marginHorizontal: 2,
+  },
+  subjectInfo: {
+    flex: 1,
+    marginRight: 16,
+  },
+  subjectName: {
+    fontSize: 16,
+    color: '#333',
+    fontFamily: 'Poppins-Medium',
+    marginBottom: 8,
+  },
+  typeBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  typeBadgeText: {
+    fontSize: 12,
+    color: '#666',
+    fontFamily: 'Poppins-Regular',
+  },
+  deleteButton: {
+    padding: 8,
+  },
+  fab: {
+    position: 'absolute',
+    bottom: 24,
+    right: 24,
+    backgroundColor: '#333',
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  subListView: {
-    width: '90%',
-    flex: 1,
-  },
-  indiSubArea: {
+  snackbar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     backgroundColor: '#fff',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: -2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 8,
+  },
+  snackbarContent: {
+    padding: 24,
+  },
+  snackbarHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderRadius: 6,
-    marginTop: 12,
-    width: '100%',
+    marginBottom: 20,
   },
-  indiSubName: {
-    fontSize: 14,
-    width: '86%',
-    fontFamily: 'Poppins-Medium',
-    color: '#181818',
-  },
-  deleteBtn: {
-    paddingVertical: 4,
-  },
-  addSubjectArea: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    width: '100%',
-    padding: 12,
-    marginTop: 14,
-  },
-  addSubjectBtn: {
-    backgroundColor: '#000',
-    padding: 14,
-    borderRadius: 100,
-    marginVertical: 10,
-    justifyContent: 'center',
-    alignContent: 'center',
-    flexDirection: 'row',
+  snackbarTitle: {
+    fontSize: 20,
+    color: '#333',
+    fontFamily: 'Poppins-SemiBold',
   },
   input: {
-    width: '100%',
-    padding: 8,
-    fontFamily: 'Poppins-Medium',
-    color: '#181818',
     backgroundColor: '#f5f5f5',
-    borderRadius: 4,
-    marginBottom: 10,
+    borderRadius: 12,
+    padding: 16,
+    fontSize: 16,
+    color: '#333',
+    fontFamily: 'Poppins-Regular',
+    marginBottom: 20,
   },
-  modalView: {
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 20,
-    shadowColor: '#000',
-    width: '90%',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 2,
-    // },
-    // shadowOpacity: 0.25,
-    // shadowRadius: 4,
-    elevation: 2,
+  sectionTitle: {
+    fontSize: 16,
+    color: '#333',
+    fontFamily: 'Poppins-Medium',
+    marginBottom: 12,
   },
   typeSelector: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginBottom: 20,
+    flexWrap: 'wrap',
+    marginBottom: 24,
+    gap: 8,
   },
-  typeButton: {
-    flex: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 100,
-    borderWidth: 1,
-    borderColor: '#181818',
-    alignItems: 'center',
-    marginHorizontal: 5,
+  typeChip: {
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#f5f5f5',
+    marginRight: 8,
   },
-  selectedTypeButton: {
-    backgroundColor: '#181818',
+  selectedTypeChip: {
+    backgroundColor: '#333',
   },
-  typeButtonText: {
-    fontSize: 12,
-    color: '#181818',
+  typeChipText: {
+    fontSize: 14,
+    color: '#666',
     fontFamily: 'Poppins-Medium',
   },
-  selectedTypeButtonText: {
+  selectedTypeChipText: {
     color: '#fff',
   },
-  saveButton: {
-    backgroundColor: '#181818',
-    padding: 6,
-    borderRadius: 100,
-    marginTop: 10,
-    width: '45%',
+  actionButton: {
+    backgroundColor: '#333',
+    padding: 10,
+    borderRadius: 12,
     alignItems: 'center',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
-  cancelButton: {
-    padding: 6,
-    borderRadius: 100,
-    marginTop: 10,
-    alignItems: 'center',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'black',
-  },
-  cancelButtonText: {
+  actionButtonText: {
     fontSize: 16,
-    color: '#181818',
+    color: '#fff',
     fontFamily: 'Poppins-Medium',
   },
-  noSubDiv: {
+  emptyState: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 24,
   },
-  noSubText: {
-    marginTop: 40,
+  emptyStateTitle: {
+    fontSize: 20,
+    color: '#333',
+    fontFamily: 'Poppins-SemiBold',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  emptyStateText: {
     fontSize: 16,
-    color: '#181818',
-    fontFamily: 'Poppins-Medium',
+    color: '#666',
+    fontFamily: 'Poppins-Regular',
+    textAlign: 'center',
   },
 });
+
+export default Subject;
