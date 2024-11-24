@@ -17,6 +17,7 @@ import DocumentPicker from 'react-native-document-picker';
 import {extname} from 'path';
 import RNFS from 'react-native-fs';
 import * as ScopedStorage from 'react-native-scoped-storage';
+
 const Setting = ({navigation}) => {
   const attendance = useSelector(state => state);
   useLayoutEffect(() => {
@@ -27,9 +28,7 @@ const Setting = ({navigation}) => {
         return (
           <Text
             style={{
-              fontSize: 20,
-              marginTop: 6,
-
+              fontSize: 22,
               color: '#181818',
               fontFamily: 'Poppins-SemiBold',
             }}>
@@ -76,9 +75,6 @@ const Setting = ({navigation}) => {
       'attendance.attendify',
     );
     ToastAndroid.show('Attendance File Exported!', ToastAndroid.BOTTOM);
-    if (interstitial) {
-      interstitial.show();
-    }
   };
 
   const importAttendanceData = async () => {
@@ -107,9 +103,6 @@ const Setting = ({navigation}) => {
         console.log(e);
       }
       ToastAndroid.show('Attendance File Imported!', ToastAndroid.BOTTOM);
-      if (interstitial) {
-        interstitial.show();
-      }
     } catch (error) {
       console.log('Error importing attendance data:', error);
     }
@@ -117,58 +110,44 @@ const Setting = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.description}>
-        You can export attendance and store it on your drive or any other
-        storage and then you can import it.
-      </Text>
+      <View style={styles.header}>
+        <Text style={styles.description}>
+          Manage your attendance data here. You can export, import, or clear
+          your attendance records.
+        </Text>
+      </View>
+
+      <View style={styles.actionsContainer}>
+        <TouchableOpacity
+          style={styles.importBtn}
+          onPress={importAttendanceData}
+          activeOpacity={0.8}>
+          <Icon name="upload" size={24} color="black" />
+          <Text style={styles.importTxt}>Import Attendance</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.importBtn}
+          onPress={exportAttendanceData}
+          activeOpacity={0.8}>
+          <Icon name="download" size={24} color="black" />
+          <Text style={styles.importTxt}>Export Attendance</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.deleteBtn}
+          onPress={confirmAlert}
+          activeOpacity={0.8}>
+          <Icon name="delete-outline" size={24} color="white" />
+          <Text style={styles.deleteText}>Delete All Data</Text>
+        </TouchableOpacity>
+      </View>
+
       <TouchableOpacity
-        style={styles.importBtn}
-        onPress={importAttendanceData}
-        activeOpacity={0.8}>
-        <Text style={styles.importTxt}>Import Attendance</Text>
-        <Icon name="upload" style={{marginRight: 6}} size={24} color="black" />
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.importBtn}
-        onPress={exportAttendanceData}
-        activeOpacity={0.8}>
-        <Text style={styles.importTxt}>Export Attendance</Text>
-        <Icon
-          name="download"
-          style={{marginRight: 6}}
-          size={24}
-          color="black"
-        />
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.deleteBtn}
-        onPress={confirmAlert}
-        activeOpacity={0.8}>
-        <Text style={styles.deleteText}>Delete All Data</Text>
-        <Icon
-          name="delete-outline"
-          style={{marginRight: 6}}
-          size={24}
-          color="white"
-        />
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={{position: 'absolute', bottom: 10}}
+        style={styles.footerLink}
         activeOpacity={0.8}
         onPress={() => Linking.openURL('https://krishjotaniya.netlify.app/')}>
-        <Text
-          style={{
-            color: 'black',
-            fontSize: 14,
-            fontWeight: '600',
-            fontFamily: 'Poppins-Medium',
-            textAlign: 'center',
-            width: '100%',
-            borderBottomColor: 'black',
-            borderBottomWidth: 2,
-          }}>
-          Developed by Krish Jotaniya
-        </Text>
+        <Text style={styles.footerText}>Developed by Krish Jotaniya</Text>
       </TouchableOpacity>
     </View>
   );
@@ -181,54 +160,90 @@ const styles = StyleSheet.create({
     flex: 1,
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    backgroundColor: '#f9f9f9',
+    paddingHorizontal: 20,
+  },
+  header: {
+    marginTop: 40,
+    alignItems: 'center',
+    width: '100%',
   },
   description: {
-    color: 'black',
+    color: '#333',
     fontSize: 14,
-    fontWeight: '600',
-    fontFamily: 'Poppins-Medium',
+    fontWeight: '500',
+    fontFamily: 'Poppins-Regular',
     textAlign: 'center',
-    width: '80%',
+    marginBottom: 20,
+  },
+  actionsContainer: {
+    width: '100%',
+    paddingHorizontal: 20,
   },
   importBtn: {
     marginVertical: 15,
-    width: '70%',
-    fontSize: 18,
+    width: '100%',
     display: 'flex',
     justifyContent: 'center',
     flexDirection: 'row',
-    padding: 10,
-    borderRadius: 8,
-    borderWidth: 1.4,
+    padding: 15,
+    borderRadius: 10,
+    backgroundColor: '#ffffff',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
   },
   importTxt: {
-    color: 'black',
-    fontSize: 18,
-    marginRight: 6,
-    fontWeight: '600',
+    color: '#333',
+    fontSize: 16,
+    marginLeft: 10,
+    fontWeight: '500',
     fontFamily: 'Poppins-Medium',
     flex: 1,
     textAlign: 'center',
   },
   deleteBtn: {
     marginVertical: 15,
-    backgroundColor: '#ef4444',
-    width: '70%',
-    fontSize: 18,
+    width: '100%',
     display: 'flex',
     justifyContent: 'center',
     flexDirection: 'row',
-    padding: 10,
-    borderRadius: 8,
+    padding: 15,
+    borderRadius: 10,
+    backgroundColor: '#ef4444',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   deleteText: {
-    color: '#f5f5f5',
-    fontSize: 18,
-    marginRight: 6,
-    fontWeight: '600',
+    color: '#ffffff',
+    fontSize: 16,
+    marginLeft: 10,
+    fontWeight: '500',
     fontFamily: 'Poppins-Medium',
     flex: 1,
     textAlign: 'center',
+  },
+  footerLink: {
+    position: 'absolute',
+    bottom: 20,
+    width: '100%',
+  },
+  footerText: {
+    color: 'black',
+    fontSize: 14,
+    fontWeight: '600',
+    fontFamily: 'Poppins-Medium',
+    textAlign: 'center',
+    borderBottomColor: 'black',
+    borderBottomWidth: 2,
+    paddingBottom: 5,
   },
 });

@@ -38,7 +38,6 @@ const EditAttend = ({navigation}) => {
             style={{
               fontSize: 20,
               marginTop: 6,
-
               color: '#181818',
               fontFamily: 'Poppins-SemiBold',
             }}>
@@ -161,28 +160,45 @@ const EditAttend = ({navigation}) => {
     }
   };
 
+  const isDataAvailableForDate = () => {
+    return attendance.some(
+      item =>
+        item.present.includes(date.toString().slice(0, 15)) ||
+        item.absent.includes(date.toString().slice(0, 15)) ||
+        (item.cancel && item.cancel.includes(date.toString().slice(0, 15))),
+    );
+  };
+
   return (
     <View style={styles.container}>
       <ChangeDate
         date={date.toString().slice(0, 15)}
         dateChangeHandler={dateChangeHandler}
       />
-      <FlatList
-        style={styles.scrollView}
-        data={attendance}
-        keyExtractor={item => item.id}
-        renderItem={({item}) => (
-          <EditDiv
-            date={date.toString().slice(0, 15)}
-            id={item.id}
-            subject={item.name}
-            present={item.present}
-            absent={item.absent}
-            cancel={item.cancel ? item.cancel : []}
-            removeAttendanceHandler={removeAttendanceHandler}
-          />
-        )}
-      />
+      {isDataAvailableForDate() ? (
+        <FlatList
+          style={styles.scrollView}
+          data={attendance}
+          keyExtractor={item => item.id}
+          renderItem={({item}) => (
+            <EditDiv
+              date={date.toString().slice(0, 15)}
+              id={item.id}
+              subject={item.name}
+              present={item.present}
+              absent={item.absent}
+              cancel={item.cancel ? item.cancel : []}
+              removeAttendanceHandler={removeAttendanceHandler}
+            />
+          )}
+        />
+      ) : (
+        <View style={styles.noDataContainer}>
+          <Text style={styles.noDataText}>
+            No attendance data for this date!
+          </Text>
+        </View>
+      )}
       <Modal visible={showPopup} transparent animationType="fade">
         <View style={styles.modalContainer}>
           <View style={styles.popup}>
@@ -234,6 +250,18 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '90%',
     marginBottom: 10,
+  },
+  noDataContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noDataText: {
+    fontSize: 18,
+    color: 'gray',
+    fontFamily: 'Poppins-Medium',
+    textAlign: 'center',
+    marginTop: 20,
   },
   modalContainer: {
     flex: 1,

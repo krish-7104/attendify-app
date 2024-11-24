@@ -1,16 +1,8 @@
-import {
-  StyleSheet,
-  Text,
-  ScrollView,
-  View,
-  TouchableOpacity,
-} from 'react-native';
-import React, {useLayoutEffect, useState} from 'react';
-import Dashboard from '../../Components/Dashboard';
+import {StyleSheet, Text, ScrollView, View} from 'react-native';
+import React, {useLayoutEffect} from 'react';
 import {useSelector} from 'react-redux';
 
 const Analysis = ({navigation}) => {
-  const [filter, setFilter] = useState('All');
   const data = useSelector(state => state);
 
   useLayoutEffect(() => {
@@ -44,22 +36,11 @@ const Analysis = ({navigation}) => {
     return '#f87171'; // Red
   };
 
-  const filteredData = () => {
-    if (filter === 'All') return data;
-    return data.filter(subject => {
-      const borderColor = getBorderColor(subject);
-      if (filter === 'Green' && borderColor === '#4ade80') return true;
-      if (filter === 'Yellow' && borderColor === '#facc15') return true;
-      if (filter === 'Red' && borderColor === '#f87171') return true;
-      return false;
-    });
-  };
-
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.analysisContainer}>
-          {filteredData().map(subject => (
+          {data.map(subject => (
             <View
               style={[styles.card, {borderLeftColor: getBorderColor(subject)}]}
               key={subject.id}>

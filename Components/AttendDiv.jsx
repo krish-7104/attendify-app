@@ -1,13 +1,24 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
+
 const AttendDiv = props => {
+  const getBorderColor = () => {
+    const totalClasses = props.present.length + props.absent.length;
+    const attendancePercentage =
+      totalClasses > 0 ? (props.present.length * 100) / totalClasses : 0;
+
+    if (attendancePercentage >= 75) return '#4ade80'; // Green
+    if (attendancePercentage >= 50) return '#facc15'; // Yellow
+    return '#f87171'; // Red
+  };
+
   if (
     props.present.includes(props.date) ||
     props.absent.includes(props.date) ||
     props.cancel.includes(props.date)
   ) {
     return (
-      <View style={styles.div}>
+      <View style={[styles.div, {borderLeftColor: getBorderColor()}]}>
         <View style={styles.textArea}>
           <Text style={styles.subName}>{props.subject}</Text>
         </View>
@@ -118,6 +129,12 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'flex-start',
     marginBottom: 12,
+    borderLeftWidth: 6,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   textArea: {
     display: 'flex',

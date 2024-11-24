@@ -20,6 +20,7 @@ const Main = ({navigation}) => {
   const [sortedAttendance, setSortedAttendance] = useState([]);
   const dispatch = useDispatch();
   const attendance = useSelector(state => state);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTintColor: 'black',
