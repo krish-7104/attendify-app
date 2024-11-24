@@ -1,14 +1,27 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {useEffect} from 'react';
-import {useState} from 'react';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 const ChangeDate = props => {
-  const [date, setDate] = useState();
+  const [currentDate, setCurrentDate] = useState('');
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
   useEffect(() => {
-    let date = new Date();
-    setDate(date.toString().slice(0, 15));
+    const date = new Date();
+    setCurrentDate(date.toString().slice(0, 15));
   }, []);
+
+  const openDatePicker = () => {
+    setShowDatePicker(true);
+  };
+
+  const handleDateChange = (event, selectedDate) => {
+    if (selectedDate) {
+      props.dateChangeHandler('manual', selectedDate);
+    }
+    setShowDatePicker(false);
+  };
 
   return (
     <View style={styles.dateDiv}>
@@ -17,12 +30,26 @@ const ChangeDate = props => {
         onPress={() => props.dateChangeHandler('left')}>
         <Icon name="caretleft" size={20} color="black" />
       </TouchableOpacity>
-      <Text style={styles.date}>{props.date && props.date}</Text>
+      <TouchableOpacity style={styles.datePickerBtn} onPress={openDatePicker}>
+        <View style={styles.dateContainer}>
+          <Text style={styles.dateText}>{props.date || currentDate}</Text>
+        </View>
+      </TouchableOpacity>
+      {showDatePicker && (
+        <DateTimePicker
+          value={new Date()}
+          mode="date"
+          display="spinner"
+          onChange={handleDateChange}
+        />
+      )}
       <TouchableOpacity
         style={
-          props.date === date ? styles.changedateBtnDis : styles.changedateBtn
+          props.date === currentDate
+            ? styles.changedateBtnDisabled
+            : styles.changedateBtn
         }
-        disabled={props.date === date ? true : false}
+        disabled={props.date === currentDate}
         onPress={() => props.dateChangeHandler('right')}>
         <Icon name="caretright" size={20} color="black" />
       </TouchableOpacity>
@@ -34,27 +61,35 @@ export default ChangeDate;
 
 const styles = StyleSheet.create({
   dateDiv: {
-    marginVertical: 14,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
     flexDirection: 'row',
-  },
-  changedateBtnDis: {
-    padding: 8,
-    borderRadius: 6,
-    opacity: 0.1,
+    alignItems: 'center',
+    marginVertical: 16,
+    paddingHorizontal: 20,
+    justifyContent: 'space-between',
   },
   changedateBtn: {
-    padding: 8,
-    borderRadius: 6,
+    borderRadius: 2,
+    padding: 12,
   },
-  date: {
-    fontSize: 16,
-    paddingHorizontal: 10,
-    textAlign: 'center',
-    width: '50%',
-    fontFamily: 'Poppins-Medium',
+  changedateBtnDisabled: {
+    padding: 12,
+    opacity: 0.5,
+  },
+  datePickerBtn: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 12,
+    paddingVertical: 8,
+    width: '60%',
+  },
+  dateContainer: {
+    alignItems: 'center',
+  },
+  dateText: {
+    fontSize: 18,
+    fontWeight: '600',
     color: '#181818',
+    fontFamily: 'Poppins-Medium',
+    lineHeight: 1.5 * 18,
   },
 });

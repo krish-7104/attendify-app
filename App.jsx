@@ -16,12 +16,16 @@ import {Linking} from 'react-native';
 import {View, Image, StyleSheet, Text} from 'react-native';
 import {LogLevel, OneSignal} from 'react-native-onesignal';
 import {useEffect} from 'react';
+import {ONESIGNAL} from './app-data';
 
 export default function App() {
   useEffect(() => {
-    OneSignal.Debug.setLogLevel(LogLevel.Verbose);
-    OneSignal.initialize(ONESIGNAL);
-    OneSignal.Notifications.requestPermission(true);
+    const ConfigureOnesignal = () => {
+      OneSignal.Debug.setLogLevel(LogLevel.Verbose);
+      OneSignal.initialize(ONESIGNAL);
+      OneSignal.Notifications.requestPermission(true);
+    };
+    !__DEV__ && ConfigureOnesignal();
   }, []);
   const Drawer = createDrawerNavigator();
   function CustomDrawerContent(props) {

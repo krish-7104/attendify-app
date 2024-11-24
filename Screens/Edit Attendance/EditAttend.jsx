@@ -55,7 +55,11 @@ const EditAttend = ({navigation}) => {
     getAttendanceData();
   }, []);
 
-  const dateChangeHandler = type => {
+  const dateChangeHandler = (type, selectedDate) => {
+    if (type === 'manual') {
+      setDate(selectedDate);
+      return;
+    }
     if (type === 'left') {
       const dateObj = new Date(date);
       dateObj.setDate(dateObj.getDate() - 1);
