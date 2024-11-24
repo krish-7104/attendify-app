@@ -1,31 +1,28 @@
-import {StyleSheet, Text, ScrollView, View} from 'react-native';
-import React from 'react';
-import {useLayoutEffect} from 'react';
+import {
+  StyleSheet,
+  Text,
+  ScrollView,
+  View,
+  TouchableOpacity,
+} from 'react-native';
+import React, {useLayoutEffect, useState} from 'react';
 import Dashboard from '../../Components/Dashboard';
 import {useSelector} from 'react-redux';
 
 const Analysis = ({navigation}) => {
+  const [filter, setFilter] = useState('All');
+  const data = useSelector(state => state);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTintColor: 'black',
       title: 'Analysis',
-      headerTitle: () => {
-        return (
-          <Text
-            style={{
-              fontSize: 20,
-              marginTop: 6,
-
-              color: '#181818',
-              fontFamily: 'Poppins-SemiBold',
-            }}>
-            Attendance Analysis
-          </Text>
-        );
-      },
+      headerTitle: () => (
+        <Text style={styles.headerTitle}>Attendance Analysis</Text>
+      ),
     });
   }, [navigation]);
-  const data = useSelector(state => state);
+
   const getAttendanceSuggestion = (presentCount, totalCount) => {
     const currentPercentage = (presentCount * 100) / totalCount;
     if (currentPercentage < 75) {
@@ -34,7 +31,7 @@ const Analysis = ({navigation}) => {
       );
       return `Attend ${lecturesNeeded} more lectures to reach 75% attendance.`;
     }
-    return ' ';
+    return '';
   };
 
   const getBorderColor = subject => {
@@ -42,148 +39,83 @@ const Analysis = ({navigation}) => {
     const attendancePercentage =
       totalClasses > 0 ? (subject.present.length * 100) / totalClasses : 0;
 
-    if (attendancePercentage >= 75) return '#4ade80';
-    if (attendancePercentage >= 50) return '#facc15';
-    return '#f87171';
+    if (attendancePercentage >= 75) return '#4ade80'; // Green
+    if (attendancePercentage >= 50) return '#facc15'; // Yellow
+    return '#f87171'; // Red
+  };
+
+  const filteredData = () => {
+    if (filter === 'All') return data;
+    return data.filter(subject => {
+      const borderColor = getBorderColor(subject);
+      if (filter === 'Green' && borderColor === '#4ade80') return true;
+      if (filter === 'Yellow' && borderColor === '#facc15') return true;
+      if (filter === 'Red' && borderColor === '#f87171') return true;
+      return false;
+    });
   };
 
   return (
-    <View>
-      <ScrollView contentContainerStyle={{alignItems: 'center'}}>
-        <Dashboard />
-        <Text
-          style={{
-            marginVertical: 14,
-            fontSize: 18,
-            fontFamily: 'Poppins-Medium',
-            color: '#181818',
-          }}>
-          Subject Wise Analysis
-        </Text>
-        <View
-          style={{
-            width: '90%',
-            borderRadius: 10,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          {data.map((subject, index) => {
-            return (
-              <View
-                style={[
-                  styles.card,
-                  {
-                    borderLeftColor: getBorderColor(subject),
-                  },
-                ]}
-                key={subject.id}>
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.analysisContainer}>
+          {filteredData().map(subject => (
+            <View
+              style={[styles.card, {borderLeftColor: getBorderColor(subject)}]}
+              key={subject.id}>
+              <View style={styles.cardHeader}>
                 <Text style={styles.title}>{subject.name}</Text>
-                <View
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}>
+                <Text style={styles.totalPercentage}>
+                  {subject.present.length === 0 && subject.absent.length === 0
+                    ? '0%'
+                    : `${(
+                        (subject.present.length * 100) /
+                        (subject.present.length + subject.absent.length)
+                      ).toFixed(2)}%`}
+                </Text>
+              </View>
+              <View style={styles.statRow}>
+                <View style={styles.statItem}>
                   <View
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'flex-start',
-                    }}>
-                    <View
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        flexDirection: 'row',
-                      }}>
-                      <View
-                        key={index}
-                        style={{
-                          backgroundColor: '#4ade80',
-                          paddingHorizontal: 6,
-                          paddingVertical: 6,
-                          borderRadius: 30,
-                          marginRight: 4,
-                        }}></View>
-                      <Text style={styles.subTitle}>
-                        Present: {subject.present.length}/
-                        {subject.present.length + subject.absent.length}
-                      </Text>
-                    </View>
-                    <View
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        flexDirection: 'row',
-                      }}>
-                      <View
-                        key={index}
-                        style={{
-                          backgroundColor: '#f87171',
-                          paddingHorizontal: 6,
-                          paddingVertical: 6,
-                          borderRadius: 30,
-                          marginRight: 4,
-                        }}></View>
-                      <Text style={styles.subTitle}>
-                        Absent: {subject.absent.length}/
-                        {subject.present.length + subject.absent.length}
-                      </Text>
-                    </View>
-                    <View
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        flexDirection: 'row',
-                      }}>
-                      <View
-                        key={index}
-                        style={{
-                          backgroundColor: '#60a5fa',
-                          paddingHorizontal: 6,
-                          paddingVertical: 6,
-                          borderRadius: 30,
-                          marginRight: 4,
-                        }}></View>
-                      <Text style={styles.subTitle}>
-                        Cancel: {subject?.cancel ? subject?.cancel?.length : 0}
-                      </Text>
-                    </View>
-                  </View>
-                  <Text style={styles.totalPercentage}>
-                    {subject.present.length === 0 && subject.absent.length === 0
-                      ? 0
-                      : (
-                          (subject.present.length * 100) /
-                          (subject.present.length + subject.absent.length)
-                        ).toPrecision(4)}
-                    %
+                    style={[styles.statDot, {backgroundColor: '#4ade80'}]}
+                  />
+                  <Text style={styles.subTitle}>
+                    Present: {subject.present.length}/
+                    {subject.present.length + subject.absent.length}
                   </Text>
                 </View>
-                {subject.present.length === 0 && subject.absent.length === 0 ? (
-                  <Text style={styles.attendanceSuggestion}>
-                    {getAttendanceSuggestion(0, 0)}
+                <View style={styles.statItem}>
+                  <View
+                    style={[styles.statDot, {backgroundColor: '#f87171'}]}
+                  />
+                  <Text style={styles.subTitle}>
+                    Absent: {subject.absent.length}/
+                    {subject.present.length + subject.absent.length}
                   </Text>
-                ) : (
-                  (subject.present.length * 100) /
-                    (subject.present.length + subject.absent.length) <
-                    75 && (
-                    <Text style={styles.attendanceSuggestion}>
-                      {getAttendanceSuggestion(
-                        subject.present.length,
-                        subject.present.length + subject.absent.length,
-                      )}
-                    </Text>
-                  )
-                )}
+                </View>
+                <View style={styles.statItem}>
+                  <View
+                    style={[styles.statDot, {backgroundColor: '#60a5fa'}]}
+                  />
+                  <Text style={styles.subTitle}>
+                    Cancel: {subject.cancel ? subject.cancel.length : 0}
+                  </Text>
+                </View>
               </View>
-            );
-          })}
+              {subject.present.length !== 0 &&
+                subject.absent.length !== 0 &&
+                (subject.present.length * 100) /
+                  (subject.present.length + subject.absent.length) <
+                  75 && (
+                  <Text style={styles.attendanceSuggestion}>
+                    {getAttendanceSuggestion(
+                      subject.present.length,
+                      subject.present.length + subject.absent.length,
+                    )}
+                  </Text>
+                )}
+            </View>
+          ))}
         </View>
       </ScrollView>
     </View>
@@ -193,32 +125,76 @@ const Analysis = ({navigation}) => {
 export default Analysis;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f9fafb',
+  },
+  scrollContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  headerTitle: {
+    fontSize: 20,
+    color: '#181818',
+    fontFamily: 'Poppins-SemiBold',
+    marginTop: 6,
+  },
+  sectionTitle: {
+    marginVertical: 14,
+    fontSize: 18,
+    fontFamily: 'Poppins-Medium',
+    color: '#181818',
+  },
+  analysisContainer: {
+    width: '90%',
+  },
   card: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    width: '96%',
+    width: '100%',
     backgroundColor: '#fff',
-    marginBottom: 12,
-    borderRadius: 8,
-    borderLeftWidth: 5,
+    marginBottom: 14,
+    borderRadius: 10,
+    borderLeftWidth: 6,
+    elevation: 3,
+    padding: 12,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
   },
   title: {
     fontFamily: 'Poppins-Medium',
     color: '#181818',
-    fontSize: 14,
-    marginBottom: 6,
+    fontSize: 16,
   },
   subTitle: {
     fontFamily: 'Poppins-Regular',
     color: '#181818',
-    fontSize: 12,
-    color: '#18181890',
-    marginBottom: 4,
+    fontSize: 13,
   },
   totalPercentage: {
     fontSize: 20,
-    fontFamily: 'Poppins-Medium',
+    fontFamily: 'Poppins-SemiBold',
     color: '#181818',
+  },
+  statRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 8,
+  },
+  statItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  statDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: 8,
   },
   attendanceSuggestion: {
     fontSize: 12,
