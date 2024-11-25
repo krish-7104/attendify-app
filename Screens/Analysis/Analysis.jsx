@@ -3,16 +3,12 @@ import React, {useEffect, useLayoutEffect} from 'react';
 import {useSelector} from 'react-redux';
 import {
   AdEventType,
-  BannerAd,
-  BannerAdSize,
   InterstitialAd,
   TestIds,
 } from 'react-native-google-mobile-ads';
 import {ANALYSIS_INTERSTITIAL} from '../../utils/app-data';
+import Icon1 from 'react-native-vector-icons/MaterialIcons';
 
-const bannerAdUnitId = __DEV__
-  ? TestIds.ANCHORED_ADAPTIVE_BANNER
-  : ANALYSIS_BANNER;
 const adUnitId = __DEV__ ? TestIds.INTERSTITIAL : ANALYSIS_INTERSTITIAL;
 const interstitial = InterstitialAd.createForAdRequest(adUnitId, {
   requestNonPersonalizedAdsOnly: true,
@@ -63,6 +59,18 @@ const Analysis = ({navigation}) => {
     if (attendancePercentage >= 50) return '#facc15'; // Yellow
     return '#f87171'; // Red
   };
+
+  if (!data || data.length === 0) {
+    return (
+      <View style={styles.emptyState}>
+        <Icon1 name="book" size={48} color="#333" />
+        <Text style={styles.emptyStateTitle}>No Analysis Found!</Text>
+        <Text style={styles.emptyStateText}>
+          Add Attendance To See Detail Analysis
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -127,15 +135,6 @@ const Analysis = ({navigation}) => {
           ))}
         </View>
       </ScrollView>
-      <View style={{marginVertical: 10}}>
-        <BannerAd
-          unitId={bannerAdUnitId}
-          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-          requestOptions={{
-            requestNonPersonalizedAdsOnly: true,
-          }}
-        />
-      </View>
     </View>
   );
 };
@@ -220,5 +219,24 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     color: '#f87171',
     marginTop: 6,
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  emptyStateTitle: {
+    fontSize: 20,
+    color: '#333',
+    fontFamily: 'Poppins-SemiBold',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  emptyStateText: {
+    fontSize: 16,
+    color: '#666',
+    fontFamily: 'Poppins-Regular',
+    textAlign: 'center',
   },
 });

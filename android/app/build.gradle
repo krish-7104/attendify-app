@@ -98,8 +98,8 @@ android {
         applicationId "com.krish.attendify"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 21
-        versionName "3.2"
+        versionCode 22
+        versionName "3.3"
     }
 
     splits {
