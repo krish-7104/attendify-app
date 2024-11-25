@@ -14,7 +14,10 @@ import ChangeDate from '../../Components/ChangeDate';
 import EditDiv from '../../Components/EditDiv';
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
 import {EDIT_ATTENDANCE_BANNER} from '../../utils/app-data';
-const adUnitId = __DEV__ ? TestIds.BANNER : EDIT_ATTENDANCE_BANNER;
+
+const adUnitId = __DEV__
+  ? TestIds.ANCHORED_ADAPTIVE_BANNER
+  : EDIT_ATTENDANCE_BANNER;
 
 const EditAttend = ({navigation}) => {
   const [date, setDate] = useState('');

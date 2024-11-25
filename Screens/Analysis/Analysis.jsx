@@ -10,7 +10,9 @@ import {
 } from 'react-native-google-mobile-ads';
 import {ANALYSIS_INTERSTITIAL} from '../../utils/app-data';
 
-const bannerAdUnitId = __DEV__ ? TestIds.BANNER : ANALYSIS_BANNER;
+const bannerAdUnitId = __DEV__
+  ? TestIds.ANCHORED_ADAPTIVE_BANNER
+  : ANALYSIS_BANNER;
 const adUnitId = __DEV__ ? TestIds.INTERSTITIAL : ANALYSIS_INTERSTITIAL;
 const interstitial = InterstitialAd.createForAdRequest(adUnitId, {
   requestNonPersonalizedAdsOnly: true,
