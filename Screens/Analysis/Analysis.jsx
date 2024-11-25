@@ -1,9 +1,35 @@
 import {StyleSheet, Text, ScrollView, View} from 'react-native';
-import React, {useLayoutEffect} from 'react';
+import React, {useEffect, useLayoutEffect} from 'react';
 import {useSelector} from 'react-redux';
+import {
+  AdEventType,
+  BannerAd,
+  BannerAdSize,
+  InterstitialAd,
+  TestIds,
+} from 'react-native-google-mobile-ads';
+import {ANALYSIS_INTERSTITIAL} from '../../utils/app-data';
 
+const bannerAdUnitId = __DEV__ ? TestIds.BANNER : ANALYSIS_BANNER;
+const adUnitId = __DEV__ ? TestIds.INTERSTITIAL : ANALYSIS_INTERSTITIAL;
+const interstitial = InterstitialAd.createForAdRequest(adUnitId, {
+  requestNonPersonalizedAdsOnly: true,
+});
 const Analysis = ({navigation}) => {
   const data = useSelector(state => state);
+
+  useEffect(() => {
+    const unsubscribe = interstitial.addAdEventListener(
+      AdEventType.LOADED,
+      () => {
+        interstitial.show();
+      },
+    );
+    interstitial.load();
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -99,6 +125,15 @@ const Analysis = ({navigation}) => {
           ))}
         </View>
       </ScrollView>
+      <View style={{marginVertical: 10}}>
+        <BannerAd
+          unitId={bannerAdUnitId}
+          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          requestOptions={{
+            requestNonPersonalizedAdsOnly: true,
+          }}
+        />
+      </View>
     </View>
   );
 };
@@ -113,6 +148,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     alignItems: 'center',
     marginTop: 20,
+    paddingBottom: 20,
   },
   headerTitle: {
     fontSize: 20,

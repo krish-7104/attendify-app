@@ -97,7 +97,6 @@ const Subject = ({navigation}) => {
       ToastAndroid.show('Please enter a subject name', ToastAndroid.SHORT);
       return;
     }
-
     let id = Math.round(Math.random() * 10000);
     const newSubjects = [];
     if (type === 'Lecture' || type === 'Both') {
@@ -121,6 +120,7 @@ const Subject = ({navigation}) => {
     dispatch(setValueHandler([...attendance, ...newSubjects]));
     hideSnackbar();
     ToastAndroid.show('Subject added successfully!', ToastAndroid.SHORT);
+    setShowAd(true);
   };
 
   const removeSubjectHandler = id => {
@@ -213,22 +213,23 @@ const Subject = ({navigation}) => {
           </Text>
         </View>
       ) : (
-        <FlatList
-          style={styles.subjectList}
-          data={attendance}
-          keyExtractor={item => item.id.toString()}
-          renderItem={renderSubjectItem}
-          showsVerticalScrollIndicator={false}
-        />
+        <>
+          <TouchableOpacity
+            style={styles.addSubjectButton}
+            activeOpacity={0.8}
+            onPress={showSnackbar}>
+            <Text style={styles.addSubjectText}>Add a Subject</Text>
+          </TouchableOpacity>
+          <FlatList
+            style={styles.subjectList}
+            data={attendance}
+            keyExtractor={item => item.id.toString()}
+            renderItem={renderSubjectItem}
+            showsVerticalScrollIndicator={false}
+          />
+        </>
       )}
-
-      <TouchableOpacity
-        style={styles.fab}
-        activeOpacity={0.8}
-        onPress={showSnackbar}>
-        <Icon name="plus" size={24} color="#fff" />
-      </TouchableOpacity>
-
+      {snackbarHeight > 0 && <View style={styles.overlay} />}
       <Animated.View style={[styles.snackbar, {height: snackbarHeight}]}>
         <View style={styles.snackbarContent}>
           <View style={styles.snackbarHeader}>
@@ -272,7 +273,6 @@ const Subject = ({navigation}) => {
                 </TouchableOpacity>
               ))}
           </View>
-
           <TouchableOpacity
             style={styles.actionButton}
             onPress={isEditing ? saveEditHandler : addSubjectHandler}>
@@ -298,13 +298,13 @@ const styles = StyleSheet.create({
   },
   subjectList: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 14,
   },
   subjectCard: {
     backgroundColor: '#fff',
     borderRadius: 12,
     padding: 16,
-    marginBottom: 12,
+    marginBottom: 15,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -338,22 +338,6 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     padding: 8,
-  },
-  fab: {
-    position: 'absolute',
-    bottom: 24,
-    right: 24,
-    backgroundColor: '#333',
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
   },
   snackbar: {
     position: 'absolute',
@@ -418,6 +402,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     fontFamily: 'Poppins-Medium',
+    lineHeight: 14 * 1.5,
   },
   selectedTypeChipText: {
     color: '#fff',
@@ -451,6 +436,29 @@ const styles = StyleSheet.create({
     color: '#666',
     fontFamily: 'Poppins-Regular',
     textAlign: 'center',
+  },
+  addSubjectButton: {
+    padding: 12,
+    marginHorizontal: 16,
+    marginVertical: 8,
+    borderRadius: 12,
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderStyle: 'dashed',
+  },
+  addSubjectText: {
+    color: '#131313',
+    fontSize: 14,
+    lineHeight: 14 * 1.5,
+    fontFamily: 'Poppins-SemiBold',
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0)',
   },
 });
 

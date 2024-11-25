@@ -16,7 +16,7 @@ import {Linking} from 'react-native';
 import {View, Image, StyleSheet, Text} from 'react-native';
 import {LogLevel, OneSignal} from 'react-native-onesignal';
 import {useEffect} from 'react';
-import {ONESIGNAL} from './app-data';
+import {ONESIGNAL} from './utils/app-data';
 
 export default function App() {
   useEffect(() => {

@@ -12,6 +12,9 @@ import {useDispatch, useSelector} from 'react-redux';
 import {setValueHandler} from '../../redux/actions';
 import ChangeDate from '../../Components/ChangeDate';
 import EditDiv from '../../Components/EditDiv';
+import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
+import {EDIT_ATTENDANCE_BANNER} from '../../utils/app-data';
+const adUnitId = __DEV__ ? TestIds.BANNER : EDIT_ATTENDANCE_BANNER;
 
 const EditAttend = ({navigation}) => {
   const [date, setDate] = useState('');
@@ -232,6 +235,13 @@ const EditAttend = ({navigation}) => {
           </View>
         </View>
       </Modal>
+      <BannerAd
+        unitId={adUnitId}
+        size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+        requestOptions={{
+          requestNonPersonalizedAdsOnly: true,
+        }}
+      />
     </View>
   );
 };
@@ -248,8 +258,9 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    width: '90%',
+    width: '100%',
     marginBottom: 10,
+    paddingHorizontal: 15,
   },
   noDataContainer: {
     flex: 1,
