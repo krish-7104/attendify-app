@@ -17,6 +17,7 @@
     "@react-navigation/drawer": "^6.6.2",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/stack": "^6.3.29",
+    "react-native-google-mobile-ads": "^12.6.0",
     "path": "^0.12.7",
     "react": "18.2.0",
     "react-native": "0.71.4",
